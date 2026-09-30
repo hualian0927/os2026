@@ -1,0 +1,7 @@
+name: os2026
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+# RISC-V GCC / binutils、QEMU、Make 复用本机系统工具。
+# gdb-multiarch 单独放在 Conda 环境内，重建方法见 docs/环境配置.md。
