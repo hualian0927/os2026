@@ -1,6 +1,6 @@
 # 实验一截图操作清单
 
-截图保存到 `/home/lhl/os2026-lab1/report/images/`。该工作目录对应本地 `lab1` 分支。请截实际终端画面，保留命令与结果；截图后再补入报告并统一推送。
+本人提供的 11 张截图已保存到 `/home/lhl/os2026-lab1/report/images/` 并插入 [报告](report.md)。该工作目录对应 `lab1` 分支。以下保留采集步骤供复现；测试结果以报告中的实际截图和文本证据为准。
 
 下列步骤沿用现有 `gdb-multiarch`，不修改 Makefile。每个终端开始时运行：
 
@@ -61,7 +61,7 @@ info registers pc
 
 原版参数不能在当前环境下完成后续交接。截完后输入 `detach`、`quit`，再退出终端 A 中的 QEMU。
 
-## 4. 04-kernel-stack.png：内核入口与练习一
+## 4. 04-kernel-stack-a.png、04-kernel-stack-b.png：内核入口与练习一
 
 这一张明确使用兼容启动命令，不写成原版 `make debug` 已成功。终端 A：
 
@@ -85,7 +85,7 @@ si
 info registers pc sp ra
 ```
 
-截图需展示：到达 `kern_entry`，执行完整 `la` 后 `sp = 0x80203000`，执行 `tail` 后 `pc = 0x8020000a` 且 `ra` 不变。窗口不够可分成 `04-kernel-stack-a.png`、`04-kernel-stack-b.png`，后续据实调整报告引用。
+截图需展示：到达 `kern_entry`，执行完整 `la` 后 `sp = 0x80203000`，执行 `tail` 后 `pc = 0x8020000a` 且 `ra` 不变。本次实际分为 `04-kernel-stack-a.png`、`04-kernel-stack-b.png` 两张，报告已引用。
 
 ## 5. 05-kernel-output.png：内核输出
 
@@ -122,7 +122,7 @@ tail -n 5 obj/check/console-O2.log
 
 这张可选截图应包含 `FMT` 和 `LAB1_CONSOLE_CHECK_PASS`，不是必须增加的截图。
 
-## 7. 07-original-loader.png：原版启动的实际限制
+## 7. 07-original-loader-a.png、07-original-loader-b.png：原版启动的实际限制
 
 ```bash
 make qemu
@@ -140,6 +140,8 @@ make grade
 
 注意：该命令先执行清理，会删除 `bin/`、`obj/`。截图后执行 `make` 恢复构建产物；需要自检日志时再执行第 6 步。已经保存到 `report/evidence/` 的日志不受影响。
 
-## 补图后的处理
+## 本次归档说明
 
-将截图按上述文件名放进 `images/`，告知已补齐。届时在 `report.md` 中插入实际图片，核对截图与结论一致，再提交并推送 `lab1` 分支。无需复制到 `main` 工作目录的 `lab1/` 文件夹。
+共归档 11 张原始截图：编译 1 张，调试启动及复位 2 张，OpenSBI 跳转 1 张，内核入口与栈 2 张，内核消息 1 张，本地自检 1 张，原版启动 2 张，评分入口与恢复验证 1 张。所有图片均在报告中引用。
+
+`05-kernel-output.png` 只展示内核消息，未展示完整启动参数；报告已说明证据范围。可选的 `06-console.png` 未提供，也没有制造占位图片或失效链接。用户已提供截图并要求整理推送，本轮按此完成提交。

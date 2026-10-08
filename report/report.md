@@ -6,7 +6,7 @@
 |------|------|
 | **实验名称** | Lab 1：最小可执行内核 |
 | **小组成员** | 2412351－李华濂 |
-| **完成日期** | 2026-10-08（代码及文字验证；测试截图待补） |
+| **完成日期** | 2026-10-08（代码、文字验证及测试截图已整理） |
 | **交付分支** | `lab1` |
 | **目录结构** | `code/` 存放代码；`report/` 存放报告、提示词、截图和文本证据 |
 
@@ -18,7 +18,7 @@
 | 2412351－李华濂 | 练习二：QEMU/GDB 启动跟踪、结果分析 |
 | 2412351－李华濂 | 构建与输出验证、环境问题排查、报告整理及仓库提交 |
 
-实验报告由 2412351－李华濂独立整理，测试截图由本人补充。
+实验报告由 2412351－李华濂整理，测试截图由本人实际操作采集，共 11 张，已按测试步骤归档。
 
 ## 一、实验目的
 
@@ -121,7 +121,7 @@ uint64_t sbi_call(uint64_t sbi_type, uint64_t arg0,
 
 #### 最终提示词
 
-本轮实际使用的最终要求是：沿用已安装的 GDB 和现有 Makefile，按提供的报告模板及 `lab1` 分支、`code/`、`report/` 结构整理交付，分工全部填写本人，截图留待补充。原始请求和后续补充见 [prompt.md](prompt.md) 第 25～28 项。没有把事后整理的模板伪称为当时已经执行成功的提示词。
+本轮实际使用的最终要求是：沿用已安装的 GDB 和现有 Makefile，按提供的报告模板及 `lab1` 分支、`code/`、`report/` 结构整理交付，分工全部填写本人；本人随后提供全部截图，要求整理并推送。原始请求和后续补充见 [prompt.md](prompt.md) 第 25～30 项。没有把事后整理的模板伪称为当时已经执行成功的提示词。
 
 #### 实现迭代过程
 
@@ -318,22 +318,63 @@ PASS: -O2 formatted output, character count, reordered entry object
 
 见 [自检汇总](evidence/current/local-check.log)、[O0 输出](evidence/current/console-O0.log) 和 [O2 输出](evidence/current/console-O2.log)。这不是课程官方评分。当前 `edata == end == 0x80203008`，清零长度为零，所以并未验证非空 BSS 清零。入口目标文件乱序测试只针对当前修正后的代码，不声称原始代码具备同样保证。
 
-### 测试截图（待本人补充）
+### 测试截图
 
-图片暂不伪造，也不把文本日志转成截图冒充实际终端画面。具体命令见 [截图操作清单](screenshots.md)。
+以下 11 张图片均为本人提供的实际终端截图，按步骤命名保存，未修改图像内容。复现命令见 [截图操作清单](screenshots.md)。图 1～3 展示原版 Makefile 启动与复位跟踪；图 4～5 对应兼容启动下的内核验证；图 7～8 展示原版配置的限制，不能与兼容启动的成功结果混为一谈。内核入口和输出截图未展示完整启动命令，启动条件应结合前文复现命令和文本证据判断。
 
-| 文件名（放入 `images/`） | 应展示的内容 | 状态 |
-|------------------------|--------------|------|
-| `01-build.png` | 重新编译、链接和生成镜像的完整输出 | 待补 |
-| `02-reset-rom.png` | 初始 PC、复位六条指令、读出下一阶段地址 | 待补 |
-| `03-opensbi.png` | 单步到达 `0x80000000` 及参数寄存器 | 待补 |
-| `04-kernel-stack.png` | 标明兼容启动条件；内核断点、`sp` 初始化、`tail` 前后 `ra` | 待补 |
-| `05-kernel-output.png` | 独立 `-kernel` 启动命令与内核启动消息 | 待补 |
-| `06-local-check.png` | Python 自检命令及三行 PASS | 待补 |
-| `07-original-loader.png` | 原版 `make qemu` 的 Next Address 为 0 | 待补 |
-| `08-make-grade.png` | 原版 `make grade` 缺少 `check` 的错误 | 待补 |
+#### 图 1：编译、链接和镜像生成
 
-<!-- 图片补齐后在这里插入真实图片引用，例如：![编译结果](images/01-build.png) -->
+先执行 `make clean`，再执行 `make`，可以看到各源文件编译、`ld` 链接及 `objcopy` 生成镜像，最后正常返回终端。
+
+![图1：清理后完整编译成功](images/01-build.png)
+
+#### 图 2：启动调试与观察复位 ROM
+
+终端 A 执行 `make debug` 后暂停等待 GDB。终端 B 使用现有 `gdb-multiarch` 连接，初始 PC 为 `0x1000`；六条复位指令与报告分析一致。`x/10i` 将后续数据误解为指令，而 `x/1gx 0x1018` 正确显示存放的地址 `0x80000000`。
+
+![图2a：make debug 启动后等待调试器](images/02-debug-launch.png)
+
+![图2b：复位PC、六条指令以及ROM中的下一阶段地址](images/02-reset-rom.png)
+
+#### 图 3：单步进入 OpenSBI
+
+执行 `si 5` 后 `pc = 0x1014`、`t0 = 0x80000000`，再次 `si` 后 `pc = 0x80000000`，验证 `jr t0` 的跳转效果。
+
+![图3：从复位ROM单步进入OpenSBI](images/03-opensbi.png)
+
+#### 图 4：内核入口、栈初始化与尾跳转
+
+断点命中 `kern_entry = 0x80200000`。执行完整 `la` 后 `sp = bootstacktop = 0x80203000`；随后进入 `kern_init = 0x8020000a`，`ra` 保持 `0x8000ae9a`。两张截图共同对应练习一的动态验证。
+
+![图4a：断点命中内核入口并观察初始寄存器](images/04-kernel-stack-a.png)
+
+![图4b：栈指针初始化以及tail前后PC和ra对比](images/04-kernel-stack-b.png)
+
+#### 图 5：内核启动消息
+
+图片直接展示 `(THU.CST) os is loading ...`，证明该次运行到达内核输出路径。此图仅截取输出尾部，未包含完整 QEMU 命令或 `Domain0 Next Address`；这些条件另见 [兼容启动日志](evidence/current/qemu.log)，不能仅凭此图断言原版 loader 参数运行成功。
+
+![图5：内核打印启动消息](images/05-kernel-output.png)
+
+#### 图 6：本地辅助自检
+
+直接运行 `python3 tools/check_lab1.py --gdb gdb-multiarch`，启动跟踪、O0 输出和 O2 输出三项检查均为 PASS。脚本内部使用 `-kernel`；这不是课程官方评分或 `make grade` 成功结果。
+
+![图6：Python本地自检的三项PASS](images/06-local-check.png)
+
+#### 图 7：原版 loader 启动的实际限制
+
+原版 `make qemu` 能启动 OpenSBI 1.3，但 `Domain0 Next Address` 为 `0`。上下两张画面展示同次启动的固件信息与后续入口，支持前文对固件到内核交接问题的分析。
+
+![图7a：原版make qemu的OpenSBI启动信息](images/07-original-loader-a.png)
+
+![图7b：原版参数下后续入口Next Address为0](images/07-original-loader-b.png)
+
+#### 图 8：make grade 失败与直接自检通过的区别
+
+`make grade` 因不存在 `check` 目标而退出。随后重新 `make` 构建，再直接执行 Python 自检，三项检查通过。这张截图同时保留失败和可行的验证方式，不能概括为“make grade 通过”。画面顶部较早的 `cd ./code` 路径错误发生在进入正确目录之前，与下方 `make grade` 缺少目标是两个独立问题。
+
+![图8：原版make grade失败，重新构建后直接自检通过](images/08-make-grade.png)
 
 ## 六、实验总结与收获
 
@@ -356,4 +397,4 @@ OS 原理中重要但本实验尚未实现的内容包括：物理页分配与�
 
 对工具生成的解释，我通过源码、反汇编、寄存器和实际日志相互核对。例如，`x/6i` 的 6 是观察数量，不能证明程序只有六条指令；`x/3i 0x80200000` 能显示内核，并不能证明 OpenSBI 已跳转到那里。
 
-提示词和实际反馈按主题保存在 [prompt.md](prompt.md)。报告中保留失败条件、原始代码与当前代码的区别、测试覆盖边界以及待补截图，避免把辅助工具的推断写成已经发生的实验事实。
+提示词和实际反馈按主题保存在 [prompt.md](prompt.md)。报告中保留失败条件、原始代码与当前代码的区别、测试覆盖边界以及实际测试截图，避免把辅助工具的推断写成已经发生的实验事实。
