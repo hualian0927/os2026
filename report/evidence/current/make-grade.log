@@ -1,0 +1,6 @@
+$ make grade
+Lab1 local self-check (not an official course score)
+make[1]: *** No rule to make target 'check'.  Stop.
+make: *** [Makefile:195: grade] Error 2
+
+Exit status: 2

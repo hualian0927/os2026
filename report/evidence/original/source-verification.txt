@@ -1,0 +1,2 @@
+All 21 source files match lab1.zip byte for byte after build.
+SHA256 lab1.zip: 067fdad9289c4430692f3b1047dcdbedd12bf7780f26f180af18522c7df89995

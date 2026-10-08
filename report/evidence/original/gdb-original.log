@@ -1,0 +1,33 @@
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+pc             0x1000	0x1000
+=> 0x1000:	auipc	t0,0x0
+   0x1004:	addi	a2,t0,40
+   0x1008:	csrr	a0,mhartid
+   0x100c:	ld	a1,32(t0)
+   0x1010:	ld	t0,24(t0)
+   0x1014:	jr	t0
+   0x80200000 <kern_entry>:	auipc	sp,0x3
+   0x80200004 <kern_entry+4>:	mv	sp,sp
+   0x80200008 <kern_entry+8>:	j	0x8020000a <kern_init>
+0x1028:	0x000000004942534f	0x0000000000000002
+0x1038:	0x0000000000000000	0x0000000000000001
+0x1048:	0x0000000000000000	0x0000000000000000
+0x0000000000001014 in ?? ()
+pc             0x1014	0x1014
+a0             0x0	0
+a1             0x87e00000	2279604224
+a2             0x1028	4136
+t0             0x80000000	2147483648
+0x0000000080000000 in ?? ()
+pc             0x80000000	0x80000000
+Hardware assisted breakpoint 1 at 0x80200000: file kern/init/entry.S, line 7.
+
+Program received signal SIGINT, Interrupt.
+0x0000000080000428 in ?? ()
+pc             0x80000428	0x80000428
+sp             0x80046eb0	0x80046eb0
+ra             0x8000ae9a	0x8000ae9a
+Num     Type           Disp Enb Address            What
+1       hw breakpoint  keep y   0x0000000080200000 kern/init/entry.S:7
+[Inferior 1 (process 1) detached]
