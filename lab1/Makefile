@@ -24,8 +24,7 @@ endif
 HOSTCC		:= gcc
 HOSTCFLAGS	:= -Wall -O2
 
-GDB		?= gdb-multiarch
-PYTHON		?= python3
+GDB		:= $(GCCPREFIX)gdb
 
 CC		:= $(GCCPREFIX)gcc
 CFLAGS  := -mcmodel=medany -std=gnu99 -Wno-unused -Werror
@@ -157,31 +156,31 @@ TARGETS: $(TARGETS)
 
 .DEFAULT_GOAL := TARGETS
 
-.PHONY: qemu debug gdb
+.PHONY: qemu 
 qemu: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
 #	$(V)$(QEMU) -kernel $(UCOREIMG) -nographic
 	$(V)$(QEMU) \
 		-machine virt \
 		-nographic \
 		-bios default \
-		-kernel $(UCOREIMG)
+		-device loader,file=$(UCOREIMG),addr=0x80200000
 
 debug: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
 	$(V)$(QEMU) \
 		-machine virt \
 		-nographic \
 		-bios default \
-		-kernel $(UCOREIMG) \
+		-device loader,file=$(UCOREIMG),addr=0x80200000\
 		-s -S
 
 gdb:
-	$(GDB) \
+	riscv64-unknown-elf-gdb \
     -ex 'file bin/kernel' \
     -ex 'set arch riscv:rv64' \
     -ex 'target remote localhost:1234'
 
 	
-.PHONY: check grade touch
+.PHONY: grade touch
 
 GRADE_GDB_IN	:= .gdb.in
 GRADE_QEMU_OUT	:= .qemu.out
@@ -190,9 +189,6 @@ HANDIN			:= proj$(PROJ)-handin.tar.gz
 TOUCH_FILES		:= kern/trap/trap.c
 
 MAKEOPTS		:= --quiet --no-print-directory
-
-check: $(UCOREIMG)
-	$(V)$(PYTHON) tools/check_lab1.py --qemu "$(QEMU)" --gdb "$(GDB)" --gcc-prefix "$(GCCPREFIX)"
 
 grade:
 	$(V)$(MAKE) $(MAKEOPTS) clean
