@@ -1,8 +1,0 @@
-Recorded at: 2026-09-30T16:53:20.644503+08:00
-Python 3.12.14
-GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1
-riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0
-GNU ld (2.42-1ubuntu1+6) 2.42
-QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
-GNU Make 4.3
-git version 2.43.0
