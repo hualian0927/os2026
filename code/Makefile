@@ -24,7 +24,8 @@ endif
 HOSTCC		:= gcc
 HOSTCFLAGS	:= -Wall -O2
 
-GDB		:= $(GCCPREFIX)gdb
+GDB		?= gdb-multiarch
+PYTHON		?= python3
 
 CC		:= $(GCCPREFIX)gcc
 CFLAGS  := -mcmodel=medany -std=gnu99 -Wno-unused -Werror
@@ -156,28 +157,28 @@ TARGETS: $(TARGETS)
 
 .DEFAULT_GOAL := TARGETS
 
-.PHONY: qemu 
+.PHONY: qemu debug gdb check
 qemu: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
-#	$(V)$(QEMU) -kernel $(UCOREIMG) -nographic
 	$(V)$(QEMU) \
 		-machine virt \
 		-nographic \
 		-bios default \
-		-device loader,file=$(UCOREIMG),addr=0x80200000
+		-kernel $(UCOREIMG)
 
 debug: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
 	$(V)$(QEMU) \
 		-machine virt \
 		-nographic \
 		-bios default \
-		-device loader,file=$(UCOREIMG),addr=0x80200000\
+		-kernel $(UCOREIMG) \
 		-s -S
 
-gdb:
-	riscv64-unknown-elf-gdb \
-    -ex 'file bin/kernel' \
-    -ex 'set arch riscv:rv64' \
-    -ex 'target remote localhost:1234'
+gdb: $(kernel)
+	$(GDB) -q \
+		-ex 'set pagination off' \
+		-ex 'file bin/kernel' \
+		-ex 'set arch riscv:rv64' \
+		-ex 'target remote localhost:1234'
 
 	
 .PHONY: grade touch
@@ -189,6 +190,9 @@ HANDIN			:= proj$(PROJ)-handin.tar.gz
 TOUCH_FILES		:= kern/trap/trap.c
 
 MAKEOPTS		:= --quiet --no-print-directory
+
+check: $(UCOREIMG)
+	$(V)$(PYTHON) tools/check_lab1.py --qemu "$(QEMU)" --gdb "$(GDB)" --gcc-prefix "$(GCCPREFIX)"
 
 grade:
 	$(V)$(MAKE) $(MAKEOPTS) clean
