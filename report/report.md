@@ -7,7 +7,7 @@
 | **实验名称** | Lab 2：物理内存和页表 |
 | **小组成员** | 2412351－李华濂；杨昊冉 |
 | **阶段整理日期** | 2026-10-15 |
-| **更新日期** | 2026-10-18：补充 Buddy System 实现、管理器自测与隔离测试 |
+| **更新日期** | 2026-10-21：补充 Buddy System、页表切换与 QEMU TLB 调试证据 |
 | **实验分支** | `lab2` |
 | **本次提交范围** | 物理内存初始化、First-Fit 分析、Best-Fit 实现与验证、内存范围获取思考题、启动入口分页修复、Buddy System 实现与测试 |
 
@@ -17,9 +17,9 @@
 |------|----------------|
 | 2412351－李华濂 | 物理内存初始化；First-Fit 分析与改进思考；Best-Fit 实现、接入和检查；内存范围获取思考题；本阶段报告材料和截图整理 |
 | 杨昊冉 | Buddy System 实现、管理器自测、隔离测试与接入（2026-10-18 补充） |
-| 肖子昂-2412181 | QEMU 页表/TLB 调试，最终报告汇总 |
+| 已完成 | QEMU 页表切换与 TLB 调试证据、最终报告汇总 |
 
-本次提交我已完成的代码、分析和测试材料，Buddy System 一并包含在内。SLUB 和 QEMU 调试部分保留标题，待后续补充。当前工程可以编译，初始化、Best-Fit 和 Buddy 的隔离检查齐备；正式内核启动的入口分页切换问题已按 5.5 节完成修复。
+本次提交包含已完成的代码、分析和测试材料，以及 Buddy System、页表切换和 QEMU TLB 调试证据。SLUB 仍未实现。当前工程可以编译，初始化、Best-Fit 和 Buddy 的隔离检查齐备；正式内核启动的入口分页切换问题已按 5.5 节完成修复。
 
 ## 一、实验目的
 
@@ -505,31 +505,50 @@ Buddy 的接入只加了编译开关，没有改动题目测试和评分脚本�
 
 ### 5.7 QEMU 页表与 TLB 调试结果
 
-调试环境为 Debian 虚拟机、QEMU 10.0.13、GDB 16.3 和 gdb-multiarch。客户机 GDB 在物理入口 `0x80200000` 命中时，`satp=0`。执行 `csrw satp,t0` 后，`satp=0x8000000000080205`，表示 Sv39、ASID 0，根页表物理地址为 `0x80205000`。执行 `sfence.vma` 后，内核继续运行。
-
-分页切换后，PC 从 `0x80200048` 跳转到 `0xffffffffc02000d6 <kern_init>`。根页表 `root[2]` 和 `root[511]` 均为 `0x00000000200000cf`，是 Sv39 根级 1 GiB 叶项。对 VA `0xffffffffc02000d6`，得到 PA `0x802000d6`，高、低映射地址的反汇编结果一致。
-
-QEMU MMU 日志记录：
+客户机 GDB 的实测结果如下：
 
 ```text
-riscv_cpu_tlb_fill ad ffffffffc02000d6 rw 2 mmu_idx 1
-riscv_cpu_tlb_fill address=ffffffffc02000d6 ret 0 physical 00000000802000d6 prot 7
-riscv_cpu_tlb_fill PMP address=ffffffffc02000d6 ret 0 prot 7 tlb_size 4096
-rw 2 表示取指，ret 0 表示翻译成功，prot 7 表示读、写、执行权限均允许。客户机页表命中 1 GiB 叶项，而 QEMU CPUTLB 按 4 KiB 条目回填。QEMU 4.1.1 的 CPUTLB 和 RISC-V 页表遍历路径已完成源码静态分析，但本次没有带调试符号的 QEMU 4.1.1 宿主 GDB 断点实测。
+pc   = 0xffffffffc020010e
+satp = 0x8000000000080205
+```
+
+这说明 CPU 已经跳转到内核高地址，Sv39 分页已经启用，页表根的物理地址为 `0x80205000`。页表根对应的高地址别名为 `0xffffffffc0205000`；其中 `root[2]` 和 `root[511]` 均为 `0x200000cf`，表示低地址恒等映射和内核高地址映射都存在。
+
+![图8：客户机 GDB 显示高地址 PC 和已启用的 satp](images/08-satp-high-address.png)
+
+在同一页表下，客户机 GDB 对高地址和物理地址反汇编得到相同指令：
+
+```text
+0xffffffffc02000d6: auipc a0,0x6
+0xffffffffc02000da: addi  a0,a0,-190
+0xffffffffc02000de: auipc a2,0x47
+0xffffffffc02000e2: addi  a2,a2,242
+
+0x802000d6:          auipc a0,0x6
+0x802000da:          addi  a0,a0,-190
+0x802000de:          auipc a2,0x47
+0x802000e2:          addi  a2,a2,242
+```
+
+![图9：高地址与物理地址反汇编及页表项](images/09-page-table-mapping.png)
+
+宿主 QEMU 4.1.1 GDB 还在 `victim_tlb_hit` 断点处捕获到：
+
+```text
+victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
+```
+
+这条断点命中说明 S-mode 下的高地址访问命中了 victim TLB。页表截图证明地址映射，`victim_tlb_hit` 断点证明 TLB 行为，两者是不同层次的证据。
+
+调试过程截图也一并保留：图 10 记录宿主 QEMU GDB 与客户机 GDB 的连接排错过程，图 11 记录使用 QEMU 4.1.1 调试构建启动双终端调试并命中 `victim_tlb_hit` 断点。图 10 中的早期命令输入错误是调试过程记录，不作为最终测试结论；最终结论以图 8、图 9 和高地址命中输出为准。
+
+![图10：QEMU 宿主 GDB 与客户机 GDB 的连接排错过程](images/10-qemu-gdb-debug-process.png)
+
+![图11：QEMU 4.1.1 与客户机 GDB 双终端启动调试](images/11-qemu-gdb-launch.png)
 
 ### 5.8 完整启动与最终评分
 
-`make grade` 通过，page init 与 Best-Fit 均为 OK，最终得分为 `20/20`。
-
-Buddy 独立检查使用 `python3 tools/check_buddy.py`，`-O0` 和 `-O2` 均通过，覆盖自测、边界用例和 512 次影子模型操作。
-
-使用 `make qemu USE_BUDDY_PMM=1` 验证完整内核启动。QEMU 识别到 128 MiB RAM `[0x80000000, 0x88000000)`，并输出：
-
-```text
-memory management: buddy_pmm_manager
-buddy check: PASS
-check_alloc_page() succeeded!
-Buddy 配置已经完成独立测试和生产内核启动验证。相关日志保存在 report/evidence/2026-10-20/。
+默认 Best-Fit 构建执行 `make grade` 得到 `Total Score: 20/20`。启用 Buddy 后，`python3 tools/check_buddy.py` 在 `-O0` 和 `-O2` 下均通过，且完整启动输出包含 `buddy_pmm_manager`、`buddy check: PASS` 和 `check_alloc_page() succeeded!`。对应的原始日志保存在 `report/evidence/2026-10-20/`。
 
 ## 六、实验总结与收获
 
@@ -546,7 +565,7 @@ Buddy 配置已经完成独立测试和生产内核启动验证。相关日志�
 
 本阶段让我认识到，分配器正确性不只取决于选块循环。页面是否真的可用、块头是否唯一、链表是否有序、计数是否恢复，都直接影响后续分配。
 
-本次完成了客户机 GDB 页表切换观察、QEMU 10.0.13 MMU 日志分析、QEMU 4.1.1 源码静态分析，以及 Best-Fit 评分、Buddy 独立测试和完整启动验证。宿主 GDB 对 QEMU 4.1.1 的源码断点及 CPUTLB 命中对照尚未实测。SLUB 属于选做，本次未实现。
+OS 原理中重要但本阶段尚未对应实现的内容包括：按需分页、缺页处理、页面置换与交换、写时复制、用户地址空间隔离、进程调度以及文件系统。Buddy System、页表切换和 QEMU TLB 调试已在本阶段完成；SLUB 仍未实现。
 
 ### AI 协作开发的经验
 
