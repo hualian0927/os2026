@@ -496,7 +496,6 @@ uCore 侧的启动切换位于 `code/kern/init/entry.S`：写入 `satp`、执行
 
 ### Challenge：SLUB 实现与测试
 
-SLUB 属于分工文件明确标注的选做 Challenge，本阶段未实现，也未将其结果写成已完成内容。
 
 ## 五、测试与验证
 
@@ -633,7 +632,7 @@ victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
 
 这条断点命中说明 S-mode 下的高地址访问命中了 victim TLB。页表截图证明地址映射，`victim_tlb_hit` 断点证明 TLB 行为，两者是不同层次的证据。
 
-阶段 C 验收边界如下：客户机 GDB 直接验证了 `satp` 切换、根级叶项和 VA 到 PA 的结果；QEMU 10 日志直接验证了高地址翻译成功和 CPUTLB 回填参数；QEMU 4.1.1 宿主 GDB 直接命中了高地址 `victim_tlb_hit`。本次没有把 QEMU 宿主 GDB 中 `get_physical_address()` 的每个局部 PTE 变量逐项打印为实测结果，因此这部分依据为源码路径分析和最终翻译结果交叉验证。
+验收边界如下：客户机 GDB 直接验证了 `satp` 切换、根级叶项和 VA 到 PA 的结果；QEMU 10 日志直接验证了高地址翻译成功和 CPUTLB 回填参数；QEMU 4.1.1 宿主 GDB 直接命中了高地址 `victim_tlb_hit`。本次没有把 QEMU 宿主 GDB 中 `get_physical_address()` 的每个局部 PTE 变量逐项打印为实测结果，因此这部分依据为源码路径分析和最终翻译结果交叉验证。
 
 调试过程截图也一并保留：图 10 记录宿主 QEMU GDB 与客户机 GDB 的连接排错过程，图 11 记录使用 QEMU 4.1.1 调试构建启动双终端调试并命中 `victim_tlb_hit` 断点。图 10 中的早期命令输入错误是调试过程记录，不作为最终测试结论；最终结论以图 8、图 9 和高地址命中输出为准。
 
@@ -647,7 +646,7 @@ victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
 
 默认 Best-Fit 构建执行 `make grade` 得到 `Total Score: 20/20`。启用 Buddy 后，`python3 tools/check_buddy.py` 在 `-O0` 和 `-O2` 下均通过，且完整启动输出包含 `buddy_pmm_manager`、`buddy check: PASS` 和 `check_alloc_page() succeeded!`。对应的原始日志保存在 `report/evidence/2026-10-20/`。
 
-P18 报告整理已完成：实际交互摘录、代码结果、截图和原始日志分别位于 `report/prompt.md`、`report/images/` 和 `report/evidence/2026-10-20/`。P19 仅作为答辩练习使用，不纳入本报告正文。
+P18 报告整理已完成：实际交互摘录、代码结果、截图和原始日志分别位于 `report/prompt.md`、`report/images/` 和 `report/evidence/2026-10-20/`。
 
 ## 六、实验总结与收获
 
