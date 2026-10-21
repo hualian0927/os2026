@@ -5,11 +5,11 @@
 | 项目 | 内容 |
 |------|------|
 | **实验名称** | Lab 2：物理内存和页表 |
-| **小组成员** | 2412351－李华濂；杨昊冉 |
+| **小组成员** | 2412351－李华濂；杨昊冉；2412181－肖子昂 |
 | **阶段整理日期** | 2026-10-15 |
-| **更新日期** | 2026-10-21：补充 Buddy System、页表切换与 QEMU TLB 调试证据 |
+| **更新日期** | 2026-10-22：补充阶段 C 调试流程、证据说明与理解检查 |
 | **实验分支** | `lab2` |
-| **本次提交范围** | 物理内存初始化、First-Fit 分析、Best-Fit 实现与验证、内存范围获取思考题、启动入口分页修复、Buddy System 实现与测试 |
+| **本次提交范围** | 物理内存初始化、First-Fit 分析、Best-Fit 实现与验证、内存范围获取思考题、启动入口分页修复、Buddy System 实现与测试、QEMU 页表/TLB 调试 |
 
 ### 小组分工
 
@@ -17,7 +17,7 @@
 |------|----------------|
 | 2412351－李华濂 | 物理内存初始化；First-Fit 分析与改进思考；Best-Fit 实现、接入和检查；内存范围获取思考题；本阶段报告材料和截图整理 |
 | 杨昊冉 | Buddy System 实现、管理器自测、隔离测试与接入（2026-10-18 补充） |
-| 已完成 | QEMU 页表切换与 TLB 调试证据、最终报告汇总 |
+| 2412181－肖子昂 | QEMU 页表切换、TLB 调试、阶段 C 报告汇总与最终交付检查 |
 
 本次提交包含已完成的代码、分析和测试材料，以及 Buddy System、页表切换和 QEMU TLB 调试证据。SLUB 仍未实现。当前工程可以编译，初始化、Best-Fit 和 Buddy 的隔离检查齐备；正式内核启动的入口分页切换问题已按 5.5 节完成修复。
 
@@ -33,7 +33,7 @@
 6. 实现 Buddy System 分配器，理解阶、地址对齐、伙伴计算，以及只合并伙伴、不合并普通邻居的规则。
 7. 比较设备树、固件接口与启动协议提供内存信息的方法，理解物理内存范围与可分配空闲页的区别。
 
-页表翻译过程和 QEMU TLB 调试属于后续部分，本阶段没有将这些内容作为已经完成的实验结果。
+页表翻译过程和 QEMU TLB 调试属于阶段 C 的必做内容，本报告已经根据实际终端输出、MMU 日志和宿主 GDB 断点结果整理；未直接观察到的底层变量单独标明覆盖边界。
 
 ## 二、实验环境
 
@@ -50,6 +50,8 @@
 | 固件 | OpenSBI 1.3 |
 | 客户机调试器 | `gdb-multiarch` 15.1 |
 | 构建工具 | GNU Make 4.3 |
+
+阶段 C 在 Debian 虚拟机中复核的工具版本为 QEMU 10.0.13、GDB 16.3、`gdb-multiarch` 16.3 和 `riscv64-unknown-elf-gcc` 14.2.0；QEMU 4.1.1 宿主源码调试使用 `/home/edwin/OS/qemu-4.1.1/build/riscv64-softmmu/qemu-system-riscv64`。
 
 在本机进入工作目录后，可以使用以下命令构建和运行检查：
 
@@ -381,6 +383,93 @@ static void buddy_check(void);
 
 ### QEMU 调试：页表翻译、TLB 与分页前后比较
 
+**负责人：** 2412181－肖子昂。
+
+本节对应阶段 C 的 P10～P14。P10 使用宿主 GDB 调试 QEMU 进程、客户机 GDB 调试 uCore；P11 用实际页表项完成一次 VA 到 PA 的翻译；P12 对照 QEMU 10 的 MMU fill 日志和 QEMU 4.1.1 的 `victim_tlb_hit` 断点；P13 比较分页关闭、分页开启以及软件 TLB 与 RISC-V 硬件 TLB 的区别；P14 记录连接、断点筛选和多条命令粘贴导致的排错过程。
+
+#### 双层调试方法
+
+宿主 GDB 调试的是 QEMU 进程本身，加载 QEMU 4.1.1 的 C 源码和调试符号；客户机 GDB 调试的是 QEMU 内运行的 RISC-V uCore，加载 `bin/kernel` 的符号。宿主侧使用 `-S -gdb tcp::1234` 启动并暂停虚拟 CPU，先由宿主 GDB 执行 `run`，再由客户机 GDB 连接 `localhost:1234`。宿主断点命中时，整个 QEMU 进程会暂停，客户机 GDB 暂时没有新的执行进度；应在宿主窗口继续后再观察客户机。
+
+本次实际使用的宿主调试命令如下。宿主 GDB 停在 `(gdb)` 后逐条输入设置断点并启动 QEMU：
+
+```bash
+gdb -q --args /home/edwin/OS/qemu-4.1.1/build/riscv64-softmmu/qemu-system-riscv64 \\
+  -machine virt -nographic -bios default \\
+  -kernel /home/edwin/OS/lab2/code/bin/ucore.img -S -gdb tcp::1234
+```
+
+```gdb
+set pagination off
+set breakpoint pending on
+break victim_tlb_hit
+run
+```
+
+另一个终端连接客户机并加载 uCore 符号：
+
+```bash
+cd /home/edwin/OS/lab2/code
+gdb-multiarch -q -ex 'set pagination off' -ex 'file bin/kernel' \\
+  -ex 'set architecture riscv:rv64' \\
+  -ex 'target remote localhost:1234'
+```
+
+客户机 GDB 输入 `continue` 后运行内核；宿主 GDB 命中 QEMU 断点时，在宿主窗口用 `continue` 恢复。为避免 GDB 把多条输入拼成一个命令，每次在 `(gdb)` 后只输入一条，再等待提示符。
+
+这一区分解决了调试过程中的主要混淆：`victim_tlb_hit` 是 QEMU 宿主源码函数，不是 uCore 的函数；客户机 GDB 的 `x` 命令读取目标机内存，也不能直接当作 QEMU CPUTLB 命中证据。
+
+#### 一次实际页表翻译
+
+启动入口先在低地址 `0x80200000` 执行，此时 `satp=0`。执行 `csrw satp` 后，客户机 GDB 读到 `satp=0x8000000000080205`，即 Sv39、ASID 0、根页表 PPN `0x80205`，根页表物理地址为 `0x80205000`。`sfence.vma` 后跳转到 `0xffffffffc02000d6` 的 `kern_init`。
+
+本次启动页表的 `root[511]` 为 `0x200000cf`。它是 Sv39 根级叶项，覆盖 1 GiB，不再继续读取 VPN[1] 和 VPN[0]。高地址 `0xffffffffc02000d6` 的页内/低 30 位偏移为 `0x002000d6`，加到叶项指向的物理段基址 `0x80000000`，得到 `0x802000d6`。客户机 GDB 在两个地址处反汇编得到相同指令，QEMU 10 的 MMU 日志也记录了同一 VA 到 PA 的翻译。
+
+#### TLB 查询、未命中和填充
+
+QEMU 的访存快速路径先查软件 CPUTLB；主 TLB 未命中时，慢路径检查 victim TLB。若 victim TLB 也未命中，`tlb_fill()` 调用 RISC-V 目标的 `riscv_cpu_tlb_fill()`，后者通过 `get_physical_address()` 执行客户机页表翻译，成功后调用 `tlb_set_page()` 回填 CPUTLB。`victim_tlb_hit()` 命中时不需要重新走页表遍历，而是恢复或交换缓存项。
+
+QEMU 10 的 `-d mmu` 日志捕获到高地址取指的 `ret 0`、`prot 7` 和 `tlb_size 4096`，说明翻译成功并按 4 KiB 粒度回填软件 TLB。QEMU 4.1.1 宿主 GDB 进一步在 `victim_tlb_hit` 断点捕获到 `mmu_idx=1`、`page=0xffffffffc0200000`，证明 S-mode 下高地址访问命中了 victim TLB。
+
+宿主 GDB 的高地址命中记录为：
+
+```text
+Thread 4 hit Breakpoint 1, victim_tlb_hit(...,
+    mmu_idx=1, index=0, elt_ofs=16, page=18446744072637906944)
+(gdb) p/x page
+$ = 0xffffffffc0200000
+```
+
+其中十进制 `page` 值转换为十六进制后是 `0xffffffffc0200000`。同一次高地址命中信息中的 `mmu_idx=1` 表明该访问属于 S-mode。另有低地址 `page=0x1000`、`0x80000000`、`0x80009000` 的 victim 命中；它们只作排错记录，不作为高地址结论的依据。
+
+#### 分页前后与软件/硬件 TLB
+
+分页关闭阶段的入口访问处于低地址和 `satp=0`，QEMU 可直接使用客户机地址完成翻译；分页开启后，CPU 处于 S-mode，访问 `0xffffffffc...` 地址时必须依据 Sv39 页表得到物理地址。两阶段都可能使用 QEMU 的 CPUTLB，因为 CPUTLB 是模拟器内部缓存客户机地址到宿主 RAM/设备访问路径的机制；它不等同于被模拟的 RISC-V 硬件 TLB。RISC-V 硬件 TLB 是客户机架构中的地址转换缓存，QEMU CPUTLB 是宿主模拟器为执行效率维护的数据结构。
+
+本次直接观察到了分页前后的 PC、satp、页表映射、MMU fill 和 victim TLB 命中；没有把“未再次进入 `riscv_cpu_tlb_fill()`”单独当作主 TLB 命中的直接证据，也没有把调试器自己的内存读取当作客户机访存。
+
+#### 排错与修复记录
+
+调试初期将多条 GDB 命令一次粘贴，造成 `Junk after item` 和表达式语法错误；之后改为每次只输入一条命令。客户机连接超时是因为宿主 GDB 尚未 `run` 或 QEMU stub 尚未监听。首次命中的 victim TLB 页面是低地址 `0x1000`、`0x80000000` 和 `0x80009000`，不能作为高地址证据；设置条件并继续运行后，捕获到目标页面 `0xffffffffc0200000`。早期对优化构建 QEMU 中 `env->pc`、`env->satp` 的局部调试值不可靠，因此没有写入最终结论。
+
+阶段 C 的实际 Prompt、反馈和排错材料见 `report/prompt.md` 的第 11 节；本节的终端结果和截图见 5.7 节。
+
+#### 源码依据与验收边界
+
+uCore 侧的启动切换位于 `code/kern/init/entry.S`：写入 `satp`、执行 `sfence.vma`，再从低地址跳到 `kern_init` 的高地址别名。QEMU 4.1.1 侧重点阅读 `target/riscv/cpu_helper.c` 的 `riscv_cpu_tlb_fill()`、`get_physical_address()`，以及 `accel/tcg/cputlb.c` 的 `victim_tlb_hit()`、`tlb_fill()` 和 load/store 慢路径。调用关系可概括为：
+
+```text
+访存快速路径
+  -> CPUTLB 主表未命中
+  -> victim_tlb_hit()
+  -> 两级均未命中时 tlb_fill()
+  -> riscv_cpu_tlb_fill()
+  -> get_physical_address()
+  -> tlb_set_page() 回填 CPUTLB
+```
+
+本阶段使用三种相互独立的材料：客户机 GDB 验证 uCore 的寄存器、页表和指令地址；QEMU 10 `-d mmu` 日志验证运行时翻译和软件 TLB 回填；QEMU 4.1.1 宿主 GDB 断点验证 `victim_tlb_hit`。这三类证据分别回答“客户机如何映射”“QEMU 如何填充”和“victim TLB 是否命中”，不能相互替代。
+
 ### Challenge：硬件可用物理内存范围的获取方法
 
 **负责人：** 2412351－李华濂。
@@ -406,6 +495,8 @@ static void buddy_check(void);
 参考资料：[QEMU virt](https://www.qemu.org/docs/master/system/riscv/virt.html#hardware-configuration-information)、[设备树规范](https://devicetree-specification.readthedocs.io/en/latest/chapter3-devicenodes.html)、[DTB 保留表](https://devicetree-specification.readthedocs.io/en/stable/flattened-format.html#memory-reservation-block)、[系统地址图接口](https://uefi.org/specs/ACPI/6.5/15_System_Address_Map_Interfaces.html)、[Multiboot2](https://www.gnu.org/software/grub/manual/multiboot2/html_node/Boot-information-format.html)。
 
 ### Challenge：SLUB 实现与测试
+
+SLUB 属于分工文件明确标注的选做 Challenge，本阶段未实现，也未将其结果写成已完成内容。
 
 ## 五、测试与验证
 
@@ -505,6 +596,8 @@ Buddy 的接入只加了编译开关，没有改动题目测试和评分脚本�
 
 ### 5.7 QEMU 页表与 TLB 调试结果
 
+**负责人：** 2412181－肖子昂。
+
 客户机 GDB 的实测结果如下：
 
 ```text
@@ -540,6 +633,8 @@ victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
 
 这条断点命中说明 S-mode 下的高地址访问命中了 victim TLB。页表截图证明地址映射，`victim_tlb_hit` 断点证明 TLB 行为，两者是不同层次的证据。
 
+阶段 C 验收边界如下：客户机 GDB 直接验证了 `satp` 切换、根级叶项和 VA 到 PA 的结果；QEMU 10 日志直接验证了高地址翻译成功和 CPUTLB 回填参数；QEMU 4.1.1 宿主 GDB 直接命中了高地址 `victim_tlb_hit`。本次没有把 QEMU 宿主 GDB 中 `get_physical_address()` 的每个局部 PTE 变量逐项打印为实测结果，因此这部分依据为源码路径分析和最终翻译结果交叉验证。
+
 调试过程截图也一并保留：图 10 记录宿主 QEMU GDB 与客户机 GDB 的连接排错过程，图 11 记录使用 QEMU 4.1.1 调试构建启动双终端调试并命中 `victim_tlb_hit` 断点。图 10 中的早期命令输入错误是调试过程记录，不作为最终测试结论；最终结论以图 8、图 9 和高地址命中输出为准。
 
 ![图10：QEMU 宿主 GDB 与客户机 GDB 的连接排错过程](images/10-qemu-gdb-debug-process.png)
@@ -548,7 +643,11 @@ victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
 
 ### 5.8 完整启动与最终评分
 
+**负责人：** 2412181－肖子昂。
+
 默认 Best-Fit 构建执行 `make grade` 得到 `Total Score: 20/20`。启用 Buddy 后，`python3 tools/check_buddy.py` 在 `-O0` 和 `-O2` 下均通过，且完整启动输出包含 `buddy_pmm_manager`、`buddy check: PASS` 和 `check_alloc_page() succeeded!`。对应的原始日志保存在 `report/evidence/2026-10-20/`。
+
+P18 报告整理已完成：实际交互摘录、代码结果、截图和原始日志分别位于 `report/prompt.md`、`report/images/` 和 `report/evidence/2026-10-20/`。P19 仅作为答辩练习使用，不纳入本报告正文。
 
 ## 六、实验总结与收获
 
