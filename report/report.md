@@ -17,7 +17,7 @@
 |------|----------------|
 | 2412351－李华濂 | 物理内存初始化；First-Fit 分析与改进思考；Best-Fit 实现、接入和检查；内存范围获取思考题；本阶段报告材料和截图整理 |
 | 杨昊冉 | Buddy System 实现、管理器自测、隔离测试与接入（2026-10-18 补充） |
-| 待补充 | QEMU 页表/TLB 调试，最终报告汇总 |
+| 肖子昂-2412181 | QEMU 页表/TLB 调试，最终报告汇总 |
 
 本次提交我已完成的代码、分析和测试材料，Buddy System 一并包含在内。SLUB 和 QEMU 调试部分保留标题，待后续补充。当前工程可以编译，初始化、Best-Fit 和 Buddy 的隔离检查齐备；正式内核启动的入口分页切换问题已按 5.5 节完成修复。
 
@@ -505,7 +505,31 @@ Buddy 的接入只加了编译开关，没有改动题目测试和评分脚本�
 
 ### 5.7 QEMU 页表与 TLB 调试结果
 
+调试环境为 Debian 虚拟机、QEMU 10.0.13、GDB 16.3 和 gdb-multiarch。客户机 GDB 在物理入口 `0x80200000` 命中时，`satp=0`。执行 `csrw satp,t0` 后，`satp=0x8000000000080205`，表示 Sv39、ASID 0，根页表物理地址为 `0x80205000`。执行 `sfence.vma` 后，内核继续运行。
+
+分页切换后，PC 从 `0x80200048` 跳转到 `0xffffffffc02000d6 <kern_init>`。根页表 `root[2]` 和 `root[511]` 均为 `0x00000000200000cf`，是 Sv39 根级 1 GiB 叶项。对 VA `0xffffffffc02000d6`，得到 PA `0x802000d6`，高、低映射地址的反汇编结果一致。
+
+QEMU MMU 日志记录：
+
+```text
+riscv_cpu_tlb_fill ad ffffffffc02000d6 rw 2 mmu_idx 1
+riscv_cpu_tlb_fill address=ffffffffc02000d6 ret 0 physical 00000000802000d6 prot 7
+riscv_cpu_tlb_fill PMP address=ffffffffc02000d6 ret 0 prot 7 tlb_size 4096
+rw 2 表示取指，ret 0 表示翻译成功，prot 7 表示读、写、执行权限均允许。客户机页表命中 1 GiB 叶项，而 QEMU CPUTLB 按 4 KiB 条目回填。QEMU 4.1.1 的 CPUTLB 和 RISC-V 页表遍历路径已完成源码静态分析，但本次没有带调试符号的 QEMU 4.1.1 宿主 GDB 断点实测。
+
 ### 5.8 完整启动与最终评分
+
+`make grade` 通过，page init 与 Best-Fit 均为 OK，最终得分为 `20/20`。
+
+Buddy 独立检查使用 `python3 tools/check_buddy.py`，`-O0` 和 `-O2` 均通过，覆盖自测、边界用例和 512 次影子模型操作。
+
+使用 `make qemu USE_BUDDY_PMM=1` 验证完整内核启动。QEMU 识别到 128 MiB RAM `[0x80000000, 0x88000000)`，并输出：
+
+```text
+memory management: buddy_pmm_manager
+buddy check: PASS
+check_alloc_page() succeeded!
+Buddy 配置已经完成独立测试和生产内核启动验证。相关日志保存在 report/evidence/2026-10-20/。
 
 ## 六、实验总结与收获
 
@@ -522,7 +546,7 @@ Buddy 的接入只加了编译开关，没有改动题目测试和评分脚本�
 
 本阶段让我认识到，分配器正确性不只取决于选块循环。页面是否真的可用、块头是否唯一、链表是否有序、计数是否恢复，都直接影响后续分配。
 
-OS 原理中重要但本阶段尚未对应实现的内容包括：按需分页、缺页处理、页面置换与交换、写时复制、用户地址空间隔离、进程调度以及文件系统。Buddy System 已在本阶段实现并接入；SLUB 和完整 QEMU 调试未包含在本次材料中。
+本次完成了客户机 GDB 页表切换观察、QEMU 10.0.13 MMU 日志分析、QEMU 4.1.1 源码静态分析，以及 Best-Fit 评分、Buddy 独立测试和完整启动验证。宿主 GDB 对 QEMU 4.1.1 的源码断点及 CPUTLB 命中对照尚未实测。SLUB 属于选做，本次未实现。
 
 ### AI 协作开发的经验
 

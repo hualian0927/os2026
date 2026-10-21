@@ -361,6 +361,9 @@ int kern_init(void) {
         }
         assert(count == ARENA_PAGES && nr_free_pages() == 0);
         assert(alloc_pages(1) == NULL);
+          for (size_t k = 0; k <= MAX_ORDER; k++) {
+              model_cnt[k] = 0;
+          }
         for (size_t i = count; i > 0; i--) {
             size_t idx = taken[i - 1] - arena;
             checked_free(idx, 1);

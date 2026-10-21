@@ -1,0 +1,4 @@
+PASS -O0: self check, edge cases, 512 shadow-model operations
+PASS -O2: self check, edge cases, 512 shadow-model operations
+All buddy checks passed; logs: /home/edwin/OS/lab2/code/obj/check-buddy
+Boot, UART and DTB getters are fixtures; production entry/SBI/DTB parsing and full-kernel boot are not covered.

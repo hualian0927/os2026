@@ -127,7 +127,13 @@ buddy_alloc_pages(size_t n) {
         nr_free_of(j) += 1UL << j;
     }
     block->property = 1UL << k;
-    ClearPageProperty(block);
+    /*
+     * Pages that were block heads while splitting may still carry
+     * PageProperty. They are now part of the allocated block.
+     */
+    for (size_t i = 0; i < (1UL << k); i++) {
+        ClearPageProperty(&block[i]);
+    }
     total_free -= 1UL << k;
     return block;
 }
