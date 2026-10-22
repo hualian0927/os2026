@@ -7,7 +7,7 @@
 | **实验名称** | Lab 2：物理内存和页表 |
 | **小组成员** | 2412351－李华濂；杨昊冉；2412181－肖子昂 |
 | **阶段整理日期** | 2026-10-15 |
-| **更新日期** | 2026-10-22：补充阶段 C 调试流程、证据说明与理解检查 |
+| **更新日期** | 2026-10-22：同步远端最新进度，补充两个 Challenge、完整启动和页表/TLB 复核截图 |
 | **实验分支** | `lab2` |
 | **本次提交范围** | 物理内存初始化、First-Fit 分析、Best-Fit 实现与验证、内存范围获取思考题、启动入口分页修复、Buddy System 实现与测试、QEMU 页表/TLB 调试 |
 
@@ -16,10 +16,10 @@
 | 成员 | 负责的练习/模块 |
 |------|----------------|
 | 2412351－李华濂 | 物理内存初始化；First-Fit 分析与改进思考；Best-Fit 实现、接入和检查；内存范围获取思考题；本阶段报告材料和截图整理 |
-| 杨昊冉 | Buddy System 实现、管理器自测、隔离测试与接入（2026-10-18 补充） |
+| 杨昊冉 | Buddy System 实现、管理器自测、隔离测试与接入；SLUB Challenge 实现与测试提示词 |
 | 2412181－肖子昂 | QEMU 页表切换、TLB 调试、阶段 C 报告汇总与最终交付检查 |
 
-本次提交包含已完成的代码、分析和测试材料，以及 Buddy System、页表切换和 QEMU TLB 调试证据。SLUB 仍未实现。当前工程可以编译，初始化、Best-Fit 和 Buddy 的隔离检查齐备；正式内核启动的入口分页切换问题已按 5.5 节完成修复。
+本次提交包含已完成的代码、分析和测试材料，以及 Buddy System、页表切换和 QEMU TLB 调试证据。SLUB Challenge 已附成员 B 提供的实现与测试提示词，当前 `lab2` 分支没有 SLUB 实现或运行结果，不能作为该算法已通过测试的证明。当前工程可以编译，初始化、Best-Fit 和 Buddy 的隔离检查齐备；正式内核启动的入口分页切换问题已按 5.5 节完成修复。
 
 ## 一、实验目的
 
@@ -65,7 +65,7 @@ python3 tools/check_best_fit_review.py
 python3 tools/check_buddy.py
 ```
 
-从仓库克隆后，应进入克隆目录下的 `code/` 执行命令。`make` 生成带符号的 `bin/kernel` 和加载镜像 `bin/ucore.img`，默认构建选择 Best-Fit 管理器。`make USE_BUDDY_PMM=1` 切换到 Buddy 管理器构建，题目评分路径仍走默认的 Best-Fit。`make debug`、`make gdb` 分别在两个终端启动 QEMU 和连接客户机 GDB；当前 Makefile 已将 GDB 指向 `gdb-multiarch`。启动入口缺页问题的定位与修复见 5.5 节。
+从仓库克隆后，应进入克隆目录下的 `code/` 执行命令。`make` 生成带符号的 `bin/kernel` 和加载镜像 `bin/ucore.img`，默认构建选择 Best-Fit 管理器。`make clean` 后执行 `make USE_BUDDY_PMM=1` 切换到 Buddy 管理器构建，题目评分路径仍走默认的 Best-Fit。`make debug`、`make gdb` 分别在两个终端启动 QEMU 和连接客户机 GDB；当前 Makefile 已将 GDB 指向 `gdb-multiarch`。启动入口缺页问题的定位与修复见 5.5 节。
 
 ## 三、实验整体逻辑分析
 
@@ -377,7 +377,7 @@ static void buddy_check(void);
 
 #### 复杂度和改进空间
 
-设阶数上界为 L（当前 14）：分配是 O(L) 找阶加最多 L 次拆分；释放是 O(L) 的合并链；注册是 O(n + 块数)；计数 O(1)。除页描述符外只多用 O(L) 的链表头。
+设阶数上界为 L（当前 14），实际分配块为 s 页。找阶和拆分/合并链最多经过 O(L) 层，但当前每阶链表按地址插入，需要扫描该阶已有块；分配与释放还会逐页处理描述符。因此不能将完整实现统一写成 O(L)：分配还包含 O(s) 状态清理和各次有序插入的扫描成本；释放包含 O(s+L) 及最终插入扫描；注册还要累计这些维护成本。计数查询为 O(1)。除页描述符外，管理器链表头占 O(L) 空间，自测使用的位图和指针数组另计。
 
 可改进方向：每阶维护位图或再分桶来加速找非空阶，当前 L 很小，收益有限；把真实大小记录改到独立的块头数组，避免占用页描述符字段；对高阶块做延迟合并，降低拆分和合并频率。这些都没有实现，记录备选。
 
@@ -394,8 +394,8 @@ static void buddy_check(void);
 本次实际使用的宿主调试命令如下。宿主 GDB 停在 `(gdb)` 后逐条输入设置断点并启动 QEMU：
 
 ```bash
-gdb -q --args /home/edwin/OS/qemu-4.1.1/build/riscv64-softmmu/qemu-system-riscv64 \\
-  -machine virt -nographic -bios default \\
+gdb -q --args /home/edwin/OS/qemu-4.1.1/build/riscv64-softmmu/qemu-system-riscv64 \
+  -machine virt -nographic -bios default \
   -kernel /home/edwin/OS/lab2/code/bin/ucore.img -S -gdb tcp::1234
 ```
 
@@ -410,8 +410,8 @@ run
 
 ```bash
 cd /home/edwin/OS/lab2/code
-gdb-multiarch -q -ex 'set pagination off' -ex 'file bin/kernel' \\
-  -ex 'set architecture riscv:rv64' \\
+gdb-multiarch -q -ex 'set pagination off' -ex 'file bin/kernel' \
+  -ex 'set architecture riscv:rv64' \
   -ex 'target remote localhost:1234'
 ```
 
@@ -429,7 +429,7 @@ gdb-multiarch -q -ex 'set pagination off' -ex 'file bin/kernel' \\
 
 QEMU 的访存快速路径先查软件 CPUTLB；主 TLB 未命中时，慢路径检查 victim TLB。若 victim TLB 也未命中，`tlb_fill()` 调用 RISC-V 目标的 `riscv_cpu_tlb_fill()`，后者通过 `get_physical_address()` 执行客户机页表翻译，成功后调用 `tlb_set_page()` 回填 CPUTLB。`victim_tlb_hit()` 命中时不需要重新走页表遍历，而是恢复或交换缓存项。
 
-QEMU 10 的 `-d mmu` 日志捕获到高地址取指的 `ret 0`、`prot 7` 和 `tlb_size 4096`，说明翻译成功并按 4 KiB 粒度回填软件 TLB。QEMU 4.1.1 宿主 GDB 进一步在 `victim_tlb_hit` 断点捕获到 `mmu_idx=1`、`page=0xffffffffc0200000`，证明 S-mode 下高地址访问命中了 victim TLB。
+QEMU 10 的 `-d mmu` 日志捕获到高地址取指的 `ret 0`、`prot 7` 和 `tlb_size 4096`，说明翻译成功并按 4 KiB 粒度回填软件 TLB。QEMU 4.1.1 宿主 GDB 进一步在 `victim_tlb_hit` 断点捕获到 `mmu_idx=1`、`page=0xffffffffc0200000`，说明进入了 S-mode 高地址的 victim 查询路径；仅凭入口断点不能判断函数是否返回 true。
 
 宿主 GDB 的高地址命中记录为：
 
@@ -446,11 +446,11 @@ $ = 0xffffffffc0200000
 
 分页关闭阶段的入口访问处于低地址和 `satp=0`，QEMU 可直接使用客户机地址完成翻译；分页开启后，CPU 处于 S-mode，访问 `0xffffffffc...` 地址时必须依据 Sv39 页表得到物理地址。两阶段都可能使用 QEMU 的 CPUTLB，因为 CPUTLB 是模拟器内部缓存客户机地址到宿主 RAM/设备访问路径的机制；它不等同于被模拟的 RISC-V 硬件 TLB。RISC-V 硬件 TLB 是客户机架构中的地址转换缓存，QEMU CPUTLB 是宿主模拟器为执行效率维护的数据结构。
 
-本次直接观察到了分页前后的 PC、satp、页表映射、MMU fill 和 victim TLB 命中；没有把“未再次进入 `riscv_cpu_tlb_fill()`”单独当作主 TLB 命中的直接证据，也没有把调试器自己的内存读取当作客户机访存。
+原有记录直接观察到了分页前后的 PC、satp、页表映射、MMU fill 和 victim 查询入口；没有把“未再次进入 `riscv_cpu_tlb_fill()`”单独当作主 TLB 命中的直接证据，也没有把调试器自己的内存读取当作客户机访存。
 
 #### 排错与修复记录
 
-调试初期将多条 GDB 命令一次粘贴，造成 `Junk after item` 和表达式语法错误；之后改为每次只输入一条命令。客户机连接超时是因为宿主 GDB 尚未 `run` 或 QEMU stub 尚未监听。首次命中的 victim TLB 页面是低地址 `0x1000`、`0x80000000` 和 `0x80009000`，不能作为高地址证据；设置条件并继续运行后，捕获到目标页面 `0xffffffffc0200000`。早期对优化构建 QEMU 中 `env->pc`、`env->satp` 的局部调试值不可靠，因此没有写入最终结论。
+调试初期将多条 GDB 命令一次粘贴，造成 `Junk after item` 和表达式语法错误；之后改为每次只输入一条命令。客户机连接超时是因为宿主 GDB 尚未 `run` 或 QEMU stub 尚未监听。首次命中的 victim TLB 页面是低地址 `0x1000`、`0x80000000` 和 `0x80009000`，不能作为高地址证据；设置条件并继续运行后，捕获到目标查询页面 `0xffffffffc0200000`。早期对优化构建 QEMU 中 `env->pc`、`env->satp` 的局部调试值不可靠，因此没有写入最终结论。
 
 阶段 C 的实际 Prompt、反馈和排错材料见 `report/prompt.md` 的第 11 节；本节的终端结果和截图见 5.7 节。
 
@@ -468,7 +468,7 @@ uCore 侧的启动切换位于 `code/kern/init/entry.S`：写入 `satp`、执行
   -> tlb_set_page() 回填 CPUTLB
 ```
 
-本阶段使用三种相互独立的材料：客户机 GDB 验证 uCore 的寄存器、页表和指令地址；QEMU 10 `-d mmu` 日志验证运行时翻译和软件 TLB 回填；QEMU 4.1.1 宿主 GDB 断点验证 `victim_tlb_hit`。这三类证据分别回答“客户机如何映射”“QEMU 如何填充”和“victim TLB 是否命中”，不能相互替代。
+本阶段使用三种相互独立的材料：客户机 GDB 验证 uCore 的寄存器、页表和指令地址；QEMU 10 `-d mmu` 日志验证运行时翻译和软件 TLB 回填；QEMU 4.1.1 宿主 GDB 断点验证 `victim_tlb_hit`。这三类证据分别回答“客户机如何映射”“QEMU 如何填充”和“是否进入 victim 查询路径”，不能相互替代。
 
 ### Challenge：硬件可用物理内存范围的获取方法
 
@@ -494,7 +494,93 @@ uCore 侧的启动切换位于 `code/kern/init/entry.S`：写入 `satp`、执行
 
 参考资料：[QEMU virt](https://www.qemu.org/docs/master/system/riscv/virt.html#hardware-configuration-information)、[设备树规范](https://devicetree-specification.readthedocs.io/en/latest/chapter3-devicenodes.html)、[DTB 保留表](https://devicetree-specification.readthedocs.io/en/stable/flattened-format.html#memory-reservation-block)、[系统地址图接口](https://uefi.org/specs/ACPI/6.5/15_System_Address_Map_Interfaces.html)、[Multiboot2](https://www.gnu.org/software/grub/manual/multiboot2/html_node/Boot-information-format.html)。
 
+#### 范围、保留区与页管理的关系
+
+设备树提供的是内存地址布局。完整实现应先验证各段地址加法和边界，再从可支持的 RAM 区间中扣除保留区及占用区，对每段剩余区间向内按页对齐，最后逐段调用 `init_memmap()`。保留洞不能因为首尾地址落在 RAM 中就被一起释放。
+
+例如父节点采用 `#address-cells=2`、`#size-cells=2` 时，`reg=<0x0 0x80000000 0x0 0x08000000>` 表示 `[0x80000000,0x88000000)`，不是从零开始的连续地址空间。当前 `page_init()` 以固定映射范围建立描述符，先将所有页保留，再注册数组之后的完整页；这符合本实验的单段 RAM 假设，但不能替代通用的保留表解析。
+
+DTB 自身和 initrd 等启动数据应在仍被引用时保留，复制或解析完成且不存在后续引用后才可回收。OpenSBI 常驻代码、内核栈和启动页表不能因为控制权已经交给内核就释放。设备 MMIO 与设备专用 RAM 缓冲区也要区分：前者不是普通 RAM，后者属于 RAM 但仍可能被设备使用。
+
+内核尚不知道完整容量，并不表示启动阶段毫无已知条件。固件可以先利用 ROM、片上 SRAM 或已初始化的 RAM 工作，再通过约定入口传递 DTB 或内存图。硬件控制器或内存条信息可以提供容量线索，但不能单凭容量推导地址空洞和保留区。本题为思考题，说明来源、适用条件和保留规则即可，不要求额外伪造运行截图。
+
 ### Challenge：SLUB 实现与测试
+
+**负责人：** 杨昊冉。
+
+#### 本次提交内容和完成边界
+
+本节依据成员 B 提供的《Lab2挑战2-SLUB提示词.txt》补充。该材料包含实现和测试两份提示词，并说明代码拟在 `lab2-challeng2` 分支另行提交。本次拉取时远端没有该分支，`lab2` 分支也没有 SLUB 源文件，因此本报告只提交提示词和设计约束，不写成已实现、已运行或已取得挑战加分。完整提供文本另存于 [SLUB 提示词材料](challenge2-slub-prompts.md)。
+
+#### 设计约束与核心接口
+
+SLUB 在页分配器之上管理对象。底层 Buddy 提供一页或多页，slab 将这些页划分为同一大小的对象；一个 `kmem_cache` 维护一类对象，分别覆盖 8、16、32、64、128、256 字节。默认内核仍选择 Best-Fit，SLUB 只通过单独的构建开关进入使用 Buddy 的路径。
+
+| 接口 | 应实现的行为 |
+|------|--------------|
+| `kmem_cache_create(name, size)` | 建立缓存及统计、对象大小和对齐约束 |
+| `kmem_cache_alloc(cachep)` | 优先取已有 slab 中的空闲对象，不足时从 Buddy 取得新页 |
+| `kmem_cache_free(cachep, obj)` | 验证归属和对象边界，归还空闲链；满足约定时回收全空 slab |
+| `kmem_cache_destroy(cachep)` | 按明确的未释放对象处理规则销毁缓存，并将 slab 页归还 Buddy |
+
+实现时应明确 slab 元数据所在位置。如果元数据与对象共享页面，可用对象数要扣除页头及对齐填充，不能直接用 `PGSIZE/size`。缓存的已用与空闲对象数应分别等于各 slab 计数之和；对象只属于一个缓存和一个 slab。
+
+释放对象不清零，并不一定表示所有字节完全不变；若用对象开头存放空闲链指针，该部分会被覆盖。重复释放、跨缓存释放和销毁仍有活跃对象的缓存，都应有明确的拒绝规则。测试预计 panic 的用例需单独运行，不能使一次非法操作中断全部正常用例。
+
+#### 实现提示词
+
+```text
+在已完成 Buddy System 的 ucore Lab2 代码上实现一个简化版 SLUB 分配器。
+先说明设计（结构体、空闲链、统计字段、和 Buddy 的接口关系），再给代码。
+
+要求：
+1. 用 kmem_cache 管理一类固定大小的对象。每类缓存维护自己的 slab 链表
+   和空闲对象链表；slab 从 Buddy 分配器申请一页或多页，再按对象大小
+   切分。对象大小按 8、16、32、64、128、256 字节分档，每档一个缓存。
+2. 提供四个接口：
+   - kmem_cache_create(name, size)：创建一档缓存；
+   - kmem_cache_alloc(cachep)：取出一个对象；
+   - kmem_cache_free(cachep, obj)：归还对象；
+   - kmem_cache_destroy(cachep)：销毁缓存，占用的 slab 页还给 Buddy。
+3. 每档缓存记录 slab 数、空闲对象数、已用对象数，初始化后能打印各档统计。
+4. 分配时优先用当前 slab 的空闲对象，没有空闲对象再向 Buddy 要一页
+   新建 slab；释放时把对象挂回所属 slab 的空闲链；某个 slab 全空且
+   缓存里还有别的 slab 时，把这一页整页还给 Buddy。释放的对象只挂回
+   空闲链、不清零内容。
+5. 不改动 basic_check()、best_fit_check() 和评分脚本，默认构建仍选
+   Best-Fit；SLUB 用独立的编译开关接入，Buddy 的隔离检查还要继续通过。
+6. 保留 lab2 注释风格，代码注释一行一句、简单直接，不要过度封装。
+给出关键结构、各接口实现、复杂度和接入方法。
+```
+
+#### 独立测试提示词
+
+```text
+给上面的 SLUB 实现写一份独立测试，不修改题目已有的测试文件。
+
+要求：
+1. 测试入口自定义：先初始化 Buddy 并注册一块固定大小的 arena，
+   再在这块 arena 上跑 SLUB 用例，测试结束后 arena 要恢复原状。
+2. 用例覆盖：
+   - 创建、销毁缓存；
+   - 同一档缓存连续分配多个对象，地址不重叠、按对象大小对齐；
+   - 对象重用：释放后再次分配能拿到同一个地址；
+   - 一个 slab 用满后自动向 Buddy 申请新页；
+   - slab 全空时整页归还 Buddy，用 Buddy 的空闲页数变化核对；
+   - 多档缓存交替分配释放，互不影响；
+   - 重复释放、跨缓存释放等边界情况要有明确断言。
+3. 每一步都核对：对象不重叠、统计里的已用/空闲对象数正确、
+   slab 链表和空闲链长度与统计一致。
+4. 正常结束输出 PASS 标记；失败时打印用例名、地址和期望值。
+5. 题目原有测试和评分路径不许改，Best-Fit 的检查要继续通过。
+给出测试文件结构、用例划分和运行方法。
+```
+
+#### 测试有效性和当前结果
+
+两份提示词将实现与测试分开提出。测试使用固定 Buddy arena，可用独立位图或对象区间集合检查对象不重叠，并逐步核对 slab 数、已用/空闲对象数和链表长度。耗尽单个 slab 验证扩容，全空 slab 验证整页回收；跨缓存交错操作验证隔离，重复释放等验证边界约束。最终销毁所有缓存后，Buddy 空闲页数及 arena 布局应恢复到起始状态。
+
+这些是提交的设计与验收要求，不是已有测试结果。本次没有可运行的 SLUB 测试命令、PASS 标记或运行截图；若按题目实现并运行的要求申请完整挑战验收，还需补交代码和真实测试结果。
 
 
 ## 五、测试与验证
@@ -567,7 +653,7 @@ make qemu
 
 图 7 记录的是修复前的启动现象：只看到 OpenSBI 的虚拟平台和固件信息，没有内核里的 DTB 解析、管理器名称和分配自测输出。
 
-![图7：make qemu目前显示OpenSBI信息](images/07-opensbi-only.png)
+![图7：修复前仅显示OpenSBI的历史记录](images/07-opensbi-only.png)
 
 排错时用 GDB 读到 `scause=0xc`、`stval=0x80200000`：`satp` 已经切到 Sv39 并指向内核内的启动页表，缺页地址正是内核加载地址。原因是 `csrw satp` 之后、跳转到高地址之前，CPU 还在低位物理地址上取指，而 `boot_page_table_sv39` 原来只映射了 `0xffffffffc0000000` 高地址，缺少低位恒等映射，发生取指页缺页，内核进不了 `pmm_init()`。`make grade` 走的就是这条真实启动路径并检查串口输出。
 
@@ -575,12 +661,21 @@ make qemu
 
 初始化与分配器的隔离检查使用独立入口、UART 输出和设备树 getter 替身，直接执行生产的 `page_init()` 和分配器代码；正式启动路径见本节。详细文字证据见 [初始化记录](evidence/2026-10-15-page-init/README.md)、[Best-Fit实现记录](evidence/2026-10-15-best-fit/README.md)、[Best-Fit审查记录](evidence/2026-10-15-best-fit-review/README.md) 和 [本次提交前检查](evidence/2026-10-15-delivery/README.md)。
 
+2026-10-22 在本机对最新代码重新运行默认构建，真实启动已完成 DTB 解析、Best-Fit 选择、自测及启动页表地址输出。图 12 为本次运行日志窗口截图；图 7 保留为修复前记录。
+
+![图12：最新默认内核完整启动输出](images/12-full-boot-best-fit.png)
+
 ### 5.6 Buddy System 测试
 
 ```bash
+make clean
 make USE_BUDDY_PMM=1
+make USE_BUDDY_PMM=1 qemu
+# 退出 QEMU 后运行独立检查
 python3 tools/check_buddy.py
 ```
+
+切换管理器前先清理，因为当前 Makefile 不自动记录编译宏变化。返回默认构建同样执行 `make clean` 后再 `make`。
 
 隔离测试编译 `tests/page_init_boot.S`、`tests/buddy_check.c` 与生产源文件，在 QEMU 里跑完后核对串口标记，包括 `memory management: buddy_pmm_manager`、`buddy check: PASS`、`[Test 1] Page Init: PASS` 和 `BUDDY_PASS`。脚本在 -O0 和 -O2 下各执行一遍。
 
@@ -592,6 +687,14 @@ python3 tools/check_buddy.py
 - 位图审计：每个空闲页恰好属于一个对齐的 2 幂块，已分配页不在任何空闲块里，块头标志、`property`、双向链接和每阶计数逐一核对。
 
 Buddy 的接入只加了编译开关，没有改动题目测试和评分脚本；默认构建的 Best-Fit 检查（5.3、5.4 节）不受影响。
+
+2026-10-22 的本机复核结果如下，完整启动走实际 DTB 和 SBI，隔离测试则使用自己的入口与 getter 替身。两种结果分别记录。
+
+![图14：Buddy的O0和O2隔离检查](images/14-buddy-check.png)
+
+![图21：Buddy影子模型和完整回收检查](images/21-buddy-details.png)
+
+![图15：Buddy真实内核启动和自测](images/15-full-boot-buddy.png)
 
 ### 5.7 QEMU 页表与 TLB 调试结果
 
@@ -630,15 +733,43 @@ satp = 0x8000000000080205
 victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
 ```
 
-这条断点命中说明 S-mode 下的高地址访问命中了 victim TLB。页表截图证明地址映射，`victim_tlb_hit` 断点证明 TLB 行为，两者是不同层次的证据。
+这条断点只说明进入了 S-mode 高地址的 victim 查询。函数名包含 hit，并不意味着本次查询成功，必须检查返回值。2026-10-22 的补充复核直接记录第一次高地址查询返回 false，随后发生页表遍历和回填，见下方新截图。
 
-验收边界如下：客户机 GDB 直接验证了 `satp` 切换、根级叶项和 VA 到 PA 的结果；QEMU 10 日志直接验证了高地址翻译成功和 CPUTLB 回填参数；QEMU 4.1.1 宿主 GDB 直接命中了高地址 `victim_tlb_hit`。本次没有把 QEMU 宿主 GDB 中 `get_physical_address()` 的每个局部 PTE 变量逐项打印为实测结果，因此这部分依据为源码路径分析和最终翻译结果交叉验证。
+原有记录的边界是：客户机 GDB 直接验证映射，QEMU 10 日志验证回填，QEMU 4.1.1 入口断点只证明进入 victim 查询。本次新增宿主 GDB 的局部变量、next/finish 和返回值记录，补上真实页表遍历、victim 未命中与主 TLB 命中的直接证据。
 
-调试过程截图也一并保留：图 10 记录宿主 QEMU GDB 与客户机 GDB 的连接排错过程，图 11 记录使用 QEMU 4.1.1 调试构建启动双终端调试并命中 `victim_tlb_hit` 断点。图 10 中的早期命令输入错误是调试过程记录，不作为最终测试结论；最终结论以图 8、图 9 和高地址命中输出为准。
+调试过程截图也一并保留：图 10 记录宿主 QEMU GDB 与客户机 GDB 的连接排错过程，图 11 记录使用 QEMU 4.1.1 调试构建启动双终端调试并命中 `victim_tlb_hit` 断点。图 10 中的早期命令输入错误是调试过程记录，不作为最终测试结论；图 8、图 9 用于支持映射结论，函数入口截图用于说明查询路径；返回值和逐步翻译以本次补充的图 16～20、23 为准。
 
 ![图10：QEMU 宿主 GDB 与客户机 GDB 的连接排错过程](images/10-qemu-gdb-debug-process.png)
 
 ![图11：QEMU 4.1.1 与客户机 GDB 双终端启动调试](images/11-qemu-gdb-launch.png)
+
+#### 2026-10-22 本机补充复核
+
+本次使用 QEMU 8.2.2 复核客户机寄存器，使用本机 QEMU 4.1.1 调试构建逐步观察宿主源码。后者自带的 OpenSBI 版本为 0.4，与普通启动截图中的 OpenSBI 1.3 不同；两次执行分别保存日志，没有混用版本推导参数。完整调试输出见 [宿主日志](evidence/2026-10-22/host-mmu.log) 和 [客户机日志](evidence/2026-10-22/guest-mmu.log)。
+
+客户机 GDB 观察到：进入 `0x80200000` 时 satp=0；跳到 `kern_init=0xffffffffc02000d6` 时 satp=`0x8000000000080205`。根页表两个叶项均为 `0x200000cf`，虚实别名反汇编一致。
+
+![图16：分页前后寄存器、页表项和指令别名](images/16-guest-paging-transition.png)
+
+关闭分页时，宿主调用链仍经过 `get_page_addr_code → tlb_fill → riscv_cpu_tlb_fill → get_physical_address`。此时 mmu_idx=1、satp=0，地址 `0x80200000` 返回相同的物理页基址。这说明 QEMU 的软件 TLB 即使在客户机未启用分页时也参与缓存访问路径。
+
+![图17：Bare模式下的翻译和调用栈](images/17-host-bare-translation.png)
+
+第一次高地址取指先进入 victim 查询，FinishBreakpoint 记录返回 false，随后进入 Sv39 翻译。该记录只支持本次查询未命中，不意味着所有后续 victim 查询都未命中。
+
+![图23：victim查询返回false及Sv39调用路径](images/23-host-victim-query-and-sv39-entry.png)
+
+页表遍历中实际打印了 levels=3、i=0、ptshift=18、base=`0x80205000`、idx=`0x1ff`、pte_addr=`0x80205ff8`、pte=`0x200000cf`。`next` 依次经过 V 位和 R/W/X 分支检查，随后到达根级叶项的地址计算。虽然支持三级页表，但本次根级就是叶项，覆盖 1 GiB，因此没有继续访问下两级。
+
+QEMU 4.1.1 的该函数返回供 TLB 使用的 4 KiB 物理页基址 `0x80200000`，不是包含低 12 位偏移的完整字节地址；加上原地址低 12 位 `0xd6`，实际字节物理地址为 `0x802000d6`。返回码为 0、权限值为 7，随后执行 `tlb_set_page()` 回填。
+
+![图18：实际PTE读取、单步检查和翻译结果](images/18-host-page-walk.png)
+
+![图19：成功翻译后的软件TLB回填](images/19-host-tlb-fill.png)
+
+后续在 `get_page_addr_code()` 的主 TLB 比较处，读到 entry->addr_code=`0xffffffffc0200000`，等于当前地址按 4 KiB 对齐后的值；比较为真，单步从 1030 行直接到 1039 行，跳过 victim 查询和 fill 分支。这是主 TLB 命中的直接分支证据。
+
+![图20：主TLB比较及跳过慢路径](images/20-host-primary-tlb-hit.png)
 
 ### 5.8 完整启动与最终评分
 
@@ -647,6 +778,20 @@ victim_tlb_hit(... mmu_idx=1, ..., page=0xffffffffc0200000)
 默认 Best-Fit 构建执行 `make grade` 得到 `Total Score: 20/20`。启用 Buddy 后，`python3 tools/check_buddy.py` 在 `-O0` 和 `-O2` 下均通过，且完整启动输出包含 `buddy_pmm_manager`、`buddy check: PASS` 和 `check_alloc_page() succeeded!`。对应的原始日志保存在 `report/evidence/2026-10-20/`。
 
 P18 报告整理已完成：实际交互摘录、代码结果、截图和原始日志分别位于 `report/prompt.md`、`report/images/` 和 `report/evidence/2026-10-20/`。
+
+2026-10-22 再次对默认路径执行 `make grade`，题目检查 page_init、Best-Fit 均为 OK，总分 20/20。此评分不覆盖 Buddy、SLUB 或完整 QEMU 调试要求。
+
+![图13：默认路径题目评分20/20](images/13-make-grade.png)
+
+同一版本的初始化、Best-Fit 和反向验证回归结果如下：
+
+![图22：最新代码初始化与Best-Fit回归](images/22-latest-regression.png)
+
+### 5.9 截图覆盖与Challenge交付边界
+
+必做实现、完整启动、评分、Buddy 以及 QEMU 源码调试已分别对应图 1～6、8～9、12～23。图 7、10、11 保留为历史或调试过程，不单独作为最终成功依据。First-Fit 改进和内存范围 Challenge 以文字说明为主，不需要编造运行截图。SLUB 目前只有两份提示词，不具备真实运行截图，因此不计为完成实现与运行验收。
+
+新增图 12～23 是在实际命令/GDB运行完成后，对显示原始日志摘录的 Qt 窗口抓取的截图，并非重新伪造的终端输出；用户原图 1～11 保持原始字节。源日志、摘录位置和图片 SHA-256 见 [证据与截图清单](evidence/2026-10-22/README.md)。
 
 ## 六、实验总结与收获
 
@@ -663,7 +808,7 @@ P18 报告整理已完成：实际交互摘录、代码结果、截图和原始�
 
 本阶段让我认识到，分配器正确性不只取决于选块循环。页面是否真的可用、块头是否唯一、链表是否有序、计数是否恢复，都直接影响后续分配。
 
-OS 原理中重要但本阶段尚未对应实现的内容包括：按需分页、缺页处理、页面置换与交换、写时复制、用户地址空间隔离、进程调度以及文件系统。Buddy System、页表切换和 QEMU TLB 调试已在本阶段完成；SLUB 仍未实现。
+OS 原理中重要但本阶段尚未对应实现的内容包括：按需分页、缺页处理、页面置换与交换、写时复制、用户地址空间隔离、进程调度以及文件系统。Buddy System、页表切换和 QEMU TLB 调试已在本阶段完成；SLUB Challenge 已附成员 B 提供的实现与测试提示词，当前 `lab2` 分支没有 SLUB 实现或运行结果，不能作为该算法已通过测试的证明。
 
 ### AI 协作开发的经验
 

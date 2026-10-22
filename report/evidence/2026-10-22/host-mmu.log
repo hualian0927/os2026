@@ -1,0 +1,203 @@
+$ gdb -q -nx -batch -x /home/lhl/os2026-lab2/report/tools/host-mmu.gdb --args /home/lhl/anaconda3/envs/os2026/bin/qemu-system-riscv64-debug -machine virt -nographic -bios default -kernel /home/lhl/os2026-lab2/code/bin/ucore.img -S -gdb tcp:127.0.0.1:15341
++set debuginfod enabled off
++set confirm off
++set print pretty off
++set breakpoint pending on
++python
+Breakpoint 1 at 0x3c1e56: file /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c, line 158.
++run
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libglib-2.0.so.0
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+[New Thread 0x7ffff79656c0 (LWP 5082)]
+[New Thread 0x7ffff50e36c0 (LWP 5083)]
+
+OpenSBI v0.4 (Jul  2 2019 11:53:53)
+   ____                    _____ ____ _____
+  / __ \                  / ____|  _ \_   _|
+ | |  | |_ __   ___ _ __ | (___ | |_) || |
+ | |  | | '_ \ / _ \ '_ \ \___ \|  _ < | |
+ | |__| | |_) |  __/ | | |____) | |_) || |_
+  \____/| .__/ \___|_| |_|_____/|____/_____|
+        | |
+        |_|
+
+Platform Name          : QEMU Virt Machine
+Platform HART Features : RV64ACDFIMSU
+Platform Max HARTs     : 8
+Current Hart           : 0
+Firmware Base          : 0x80000000
+Firmware Size          : 112 KB
+Runtime SBI Version    : 0.1
+
+PMP0: 0x0000000080000000-0x000000008001ffff (A)
+PMP1: 0x0000000000000000-0xffffffffffffffff (A,R,W,X)
+[Switching to Thread 0x7ffff50e36c0 (LWP 5083)]
+
+Thread 3 "qemu-system-ris" hit Breakpoint 1, get_physical_address (env=0x5555564c10a0, physical=0x7ffff50e2760, prot=0x7ffff50e2754, addr=2149580800, access_type=2, mmu_idx=1) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:158
+158	{
++printf "\n=== BARE_TRANSLATION ===\n"
+
+=== BARE_TRANSLATION ===
++p/x addr
+$1 = 0x80200000
++p mmu_idx
+$2 = 1
++p/x env->satp
+$3 = 0x0
++bt 4
+#0  get_physical_address (env=0x5555564c10a0, physical=0x7ffff50e2760, prot=0x7ffff50e2754, addr=2149580800, access_type=2, mmu_idx=1) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:158
+#1  0x0000555555916b32 in riscv_cpu_tlb_fill (cs=0x5555564b8690, address=2149580800, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, probe=false, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:451
+#2  0x000055555585ce1f in tlb_fill (cpu=0x5555564b8690, addr=2149580800, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/accel/tcg/cputlb.c:878
+#3  0x000055555585d4c9 in get_page_addr_code (env=0x5555564c10a0, addr=2149580800) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/accel/tcg/cputlb.c:1032
++set $bare_pa = physical
++set $bare_prot = prot
++disable 1
++finish
+0x0000555555916b32 in riscv_cpu_tlb_fill (cs=0x5555564b8690, address=2149580800, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, probe=false, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:451
+451	    ret = get_physical_address(env, &pa, &prot, address, access_type, mmu_idx);
+Value returned is $4 = 0
++p/x *$bare_pa
+$5 = 0x80200000
++p *$bare_prot
+$6 = 7
++break get_physical_address if mmu_idx == 1 && addr >= 0xffffffffc0200000 && (env->satp >> 60) == 8
+Breakpoint 2 at 0x555555915e56: file /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c, line 158.
++continue
+VICTIM_LOOKUP_ENTRY mmu_idx=1 page=0xffffffffc0200000
+VICTIM_LOOKUP_RESULT page=0xffffffffc0200000 returned=false
+
+Thread 3 "qemu-system-ris" hit Breakpoint 2, get_physical_address (env=0x5555564c10a0, physical=0x7ffff50e2230, prot=0x7ffff50e2224, addr=18446744072637907158, access_type=2, mmu_idx=1) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:158
+158	{
++printf "\n=== SV39_TRANSLATION_ENTRY ===\n"
+
+=== SV39_TRANSLATION_ENTRY ===
++p/x addr
+$7 = 0xffffffffc02000d6
++p mmu_idx
+$8 = 1
++p access_type
+$9 = 2
++p/x env->satp
+$10 = 0x8000000000080205
++bt 4
+#0  get_physical_address (env=0x5555564c10a0, physical=0x7ffff50e2230, prot=0x7ffff50e2224, addr=18446744072637907158, access_type=2, mmu_idx=1) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:158
+#1  0x0000555555916b32 in riscv_cpu_tlb_fill (cs=0x5555564b8690, address=18446744072637907158, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, probe=false, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:451
+#2  0x000055555585ce1f in tlb_fill (cpu=0x5555564b8690, addr=18446744072637907158, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/accel/tcg/cputlb.c:878
+#3  0x000055555585d4c9 in get_page_addr_code (env=0x5555564c10a0, addr=18446744072637907158) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/accel/tcg/cputlb.c:1032
++set $sv_pa = physical
++set $sv_prot = prot
++disable 2
++tbreak cpu_helper.c:254
+Temporary breakpoint 3 at 0x555555916367: file /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c, line 254.
++continue
+
+Thread 3 "qemu-system-ris" hit Temporary breakpoint 3, get_physical_address (env=0x5555564c10a0, physical=0x7ffff50e2230, prot=0x7ffff50e2224, addr=18446744072637907158, access_type=2, mmu_idx=1) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:254
+254	        target_ulong ppn = pte >> PTE_PPN_SHIFT;
++printf "\n=== PAGE_WALK_ROOT_LEAF ===\n"
+
+=== PAGE_WALK_ROOT_LEAF ===
++p levels
+$11 = 3
++p i
+$12 = 0
++p ptshift
+$13 = 18
++p/x base
+$14 = 0x80205000
++p/x idx
+$15 = 0x1ff
++p/x pte_addr
+$16 = 0x80205ff8
++p/x pte
+$17 = 0x200000cf
++next
+256	        if (!(pte & PTE_V)) {
++next
+259	        } else if (!(pte & (PTE_R | PTE_W | PTE_X))) {
++next
+262	        } else if ((pte & (PTE_R | PTE_W | PTE_X)) == PTE_W) {
++tbreak cpu_helper.c:334
+Temporary breakpoint 4 at 0x5555559165ba: file /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c, line 334.
++continue
+
+Thread 3 "qemu-system-ris" hit Temporary breakpoint 4, get_physical_address (env=0x5555564c10a0, physical=0x7ffff50e2230, prot=0x7ffff50e2224, addr=18446744072637907158, access_type=2, mmu_idx=1) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:334
+334	            *physical = (ppn | (vpn & ((1L << ptshift) - 1))) << PGSHIFT;
++p/x ppn
+$18 = 0x80000
++p/x vpn
+$19 = 0xffffffffc0200
++next
+337	            if ((pte & PTE_R) || ((pte & PTE_X) && mxr)) {
++p/x *physical
+$20 = 0x80200000
++finish
+0x0000555555916b32 in riscv_cpu_tlb_fill (cs=0x5555564b8690, address=18446744072637907158, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, probe=false, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:451
+451	    ret = get_physical_address(env, &pa, &prot, address, access_type, mmu_idx);
+Value returned is $21 = 0
++printf "\n=== TRANSLATION_RESULT ===\n"
+
+=== TRANSLATION_RESULT ===
++p/x *$sv_pa
+$22 = 0x80200000
++p *$sv_prot
+$23 = 7
++tbreak cpu_helper.c:472
+Temporary breakpoint 5 at 0x555555916c21: file /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c, line 472.
++continue
+
+Thread 3 "qemu-system-ris" hit Temporary breakpoint 5, riscv_cpu_tlb_fill (cs=0x5555564b8690, address=18446744072637907158, size=0, access_type=MMU_INST_FETCH, mmu_idx=1, probe=false, retaddr=0) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/target/riscv/cpu_helper.c:472
+472	        tlb_set_page(cs, address & TARGET_PAGE_MASK, pa & TARGET_PAGE_MASK,
++printf "\n=== SOFTWARE_TLB_FILL ===\n"
+
+=== SOFTWARE_TLB_FILL ===
++p/x address
+$24 = 0xffffffffc02000d6
++p/x pa
+$25 = 0x80200000
++p ret
+$26 = 0
++p prot
+$27 = 7
++p mmu_idx
+$28 = 1
++list
+467	    }
+468	    if (ret == TRANSLATE_PMP_FAIL) {
+469	        pmp_violation = true;
+470	    }
+471	    if (ret == TRANSLATE_SUCCESS) {
+472	        tlb_set_page(cs, address & TARGET_PAGE_MASK, pa & TARGET_PAGE_MASK,
+473	                     prot, mmu_idx, TARGET_PAGE_SIZE);
+474	        return true;
+475	    } else if (probe) {
+476	        return false;
++next
+474	        return true;
++break cputlb.c:1030 if mmu_idx == 1 && addr >= 0xffffffffc0200000 && entry->addr_code == (addr & 0xfffffffffffff000)
+Breakpoint 6 at 0x55555585d43f: file /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/accel/tcg/cputlb.c, line 1030.
++continue
+
+Thread 3 "qemu-system-ris" hit Breakpoint 6, get_page_addr_code (env=0x5555564c10a0, addr=18446744072637907158) at /home/lhl/anaconda3/envs/os2026/opt/qemu-debug-build/qemu-4.1.1/accel/tcg/cputlb.c:1030
+1030	    if (unlikely(!tlb_hit(entry->addr_code, addr))) {
++printf "\n=== PRIMARY_TLB_HIT ===\n"
+
+=== PRIMARY_TLB_HIT ===
++p/x addr
+$29 = 0xffffffffc02000d6
++p mmu_idx
+$30 = 1
++p/x entry->addr_code
+$31 = 0xffffffffc0200000
++p/x (addr & 0xfffffffffffff000)
+$32 = 0xffffffffc0200000
++p entry->addr_code == (addr & 0xfffffffffffff000)
+$33 = 1
++next
+1039	    if (unlikely(entry->addr_code & (TLB_RECHECK | TLB_MMIO))) {
++printf "\n=== HOST_TRACE_COMPLETE ===\n"
+
+=== HOST_TRACE_COMPLETE ===
++kill
+[Inferior 1 (process 5079) killed]
++quit

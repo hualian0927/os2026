@@ -1,0 +1,10 @@
+{
+  "base_commit": "2c5519aa38bc0cc9f52f2a6e5a6c5d6d20d8c767",
+  "code_files_unchanged": 51,
+  "original_screenshots_unchanged": 11,
+  "new_screenshots": 12,
+  "report_image_references": 23,
+  "prompt_unchanged": true,
+  "local_links_valid": true,
+  "runtime_checks": "all executed checks passed; see README and raw logs"
+}

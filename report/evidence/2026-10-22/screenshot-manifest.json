@@ -1,0 +1,194 @@
+[
+  {
+    "image": "report/images/12-full-boot-best-fit.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/boot-best-fit.log",
+        "start": "DTB Init",
+        "end_exclusive": "qemu-system-riscv64: terminating",
+        "source_sha256": "ab6961dcd3423193e8c6917cb43d8ae5cbc6d9cc110630b5263edae49c6cc8b5"
+      }
+    ],
+    "image_sha256": "b30ae0554f05e4d44cb0795c0a27102e85b242d0112bbd4c79714b01290e0a86",
+    "width": 1640,
+    "height": 624
+  },
+  {
+    "image": "report/images/13-make-grade.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/make-grade.log",
+        "start": null,
+        "end_exclusive": null,
+        "source_sha256": "4fad13080270c8b7ec4fe6baad45205eb970d8199fef88d29dea86ffc7cb581d"
+      }
+    ],
+    "image_sha256": "583088844f9bb16732f4b9603ef470f9b673c080c5f01d00950e6795bc273190",
+    "width": 1640,
+    "height": 335
+  },
+  {
+    "image": "report/images/14-buddy-check.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/check_buddy.log",
+        "start": null,
+        "end_exclusive": null,
+        "source_sha256": "874125f3ebcdbc0c2363394e9aa7e49f769ee3bb36898a2541d06f8e842a5384"
+      }
+    ],
+    "image_sha256": "15e1c4173d7e91cb02c4a193c891326877ac9102752fe16b6b1732aeca75a5c4",
+    "width": 1640,
+    "height": 250
+  },
+  {
+    "image": "report/images/15-full-boot-buddy.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/boot-buddy.log",
+        "start": "DTB Init",
+        "end_exclusive": "qemu-system-riscv64: terminating",
+        "source_sha256": "249fe25dcf8cbfede9fde58af8bba7dce3c428a6726c339af5f5aab79db7db6b"
+      }
+    ],
+    "image_sha256": "b0cbed520604534592357e96e65c01a32296b2fec36d423e7433cb740f5574fe",
+    "width": 1640,
+    "height": 646
+  },
+  {
+    "image": "report/images/16-guest-paging-transition.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/guest-mmu.log",
+        "start": null,
+        "end_exclusive": null,
+        "source_sha256": "c2788ce95d2022e19cc716e521ecdb6c84a5a591cb178ea1a53f3a209ec27024"
+      }
+    ],
+    "image_sha256": "3eab9db6fca905e1a520962d8889434d68b59905b2865083eef7891e41e60605",
+    "width": 2220,
+    "height": 1450
+  },
+  {
+    "image": "report/images/17-host-bare-translation.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/host-mmu.log",
+        "start": "\n=== BARE_TRANSLATION ===",
+        "end_exclusive": "+break get_physical_address if mmu_idx == 1 && addr >=",
+        "source_sha256": "91cf76f436df6ed9f3c978e3119600864a4818ba872c81eac37897e27219b53f"
+      }
+    ],
+    "image_sha256": "99265a6d64bae0fdf7852d3f21d76f03d17183f8a058a144face00bf7ffa7f35",
+    "width": 2220,
+    "height": 752
+  },
+  {
+    "image": "report/images/18-host-page-walk.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/host-mmu.log",
+        "start": "\n=== PAGE_WALK_ROOT_LEAF ===",
+        "end_exclusive": "+tbreak cpu_helper.c:472",
+        "source_sha256": "91cf76f436df6ed9f3c978e3119600864a4818ba872c81eac37897e27219b53f"
+      }
+    ],
+    "image_sha256": "9ffc83a5d06bd301dbfad9738bbc1c63f48eb84ad6d47582f3ae6fe99a68e1c3",
+    "width": 2220,
+    "height": 1216
+  },
+  {
+    "image": "report/images/19-host-tlb-fill.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/host-mmu.log",
+        "start": "\n=== SOFTWARE_TLB_FILL ===",
+        "end_exclusive": "+break cputlb.c:1030",
+        "source_sha256": "91cf76f436df6ed9f3c978e3119600864a4818ba872c81eac37897e27219b53f"
+      }
+    ],
+    "image_sha256": "f55cb2b261aa49ca510e8ad515bd95c2f5dc5a331a01903043f5e2e8b0fb7585",
+    "width": 2220,
+    "height": 690
+  },
+  {
+    "image": "report/images/20-host-primary-tlb-hit.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/host-mmu.log",
+        "start": "\n=== PRIMARY_TLB_HIT ===",
+        "end_exclusive": "+printf \"\\n=== HOST_TRACE_COMPLETE",
+        "source_sha256": "91cf76f436df6ed9f3c978e3119600864a4818ba872c81eac37897e27219b53f"
+      }
+    ],
+    "image_sha256": "991b1b3dd5f1fe10b9a927c8ad1a026aa3caccc90e7fb5ba63d87ff1fa77c2c9",
+    "width": 2220,
+    "height": 448
+  },
+  {
+    "image": "report/images/21-buddy-details.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/check-buddy/console-O2.log",
+        "start": "memory management:",
+        "end_exclusive": "qemu-system-riscv64: terminating",
+        "source_sha256": "7dbe990d64f875d1304463f9606e34905d9a9a1564e28ce2265f4c4406aa4994"
+      }
+    ],
+    "image_sha256": "cf60962b9e1ecbea5f6a9e5fe8bf540ae992d9cb1a6f00279011de7de149f114",
+    "width": 1640,
+    "height": 558
+  },
+  {
+    "image": "report/images/22-latest-regression.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/check_page_init.log",
+        "start": null,
+        "end_exclusive": null,
+        "source_sha256": "c15f34bfce938719d220d9173f8afa951d22caa7ed56bbfc4b16171aa4ee8162"
+      },
+      {
+        "file": "report/evidence/2026-10-22/check_best_fit.log",
+        "start": null,
+        "end_exclusive": null,
+        "source_sha256": "02356c34c37c572cdbbb4f63e875fb782f236b3f89b816e5138a3cdf1891d708"
+      },
+      {
+        "file": "report/evidence/2026-10-22/check_best_fit_review.log",
+        "start": null,
+        "end_exclusive": null,
+        "source_sha256": "7d7ef4cc322741449dfaae01220e3091f34284e5237c493ba312bd2d6265842d"
+      }
+    ],
+    "image_sha256": "606783b827d13e3a971cfd09249aeed24d071b8b5555f8a8e524827d37c1ce42",
+    "width": 1640,
+    "height": 822
+  },
+  {
+    "image": "report/images/23-host-victim-query-and-sv39-entry.png",
+    "capture": "QWidget.grab of a real visible log viewer; no image editing",
+    "source_excerpts": [
+      {
+        "file": "report/evidence/2026-10-22/host-mmu.log",
+        "start": "VICTIM_LOOKUP_ENTRY",
+        "end_exclusive": "+set $sv_pa = physical",
+        "source_sha256": "91cf76f436df6ed9f3c978e3119600864a4818ba872c81eac37897e27219b53f"
+      }
+    ],
+    "image_sha256": "de03d428b63c5c257d07734c5312a178fc57e7657b3f08abce0711ef182a3c80",
+    "width": 2220,
+    "height": 686
+  }
+]
