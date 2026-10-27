@@ -1,0 +1,1 @@
++ cc kern/trap/trapentry.S

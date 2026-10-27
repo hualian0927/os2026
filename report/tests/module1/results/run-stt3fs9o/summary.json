@@ -1,0 +1,63 @@
+{
+  "success": true,
+  "error": null,
+  "production_unchanged": true,
+  "source": "/home/lhl/os2026/lab3/lab3_new",
+  "tools": {
+    "riscv64-unknown-elf-gcc": {
+      "path": "/usr/bin/riscv64-unknown-elf-gcc",
+      "version": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0"
+    },
+    "riscv64-unknown-elf-ld": {
+      "path": "/usr/bin/riscv64-unknown-elf-ld",
+      "version": "GNU ld (2.42-1ubuntu1+6) 2.42"
+    },
+    "riscv64-unknown-elf-objcopy": {
+      "path": "/usr/bin/riscv64-unknown-elf-objcopy",
+      "version": "GNU objcopy (2.42-1ubuntu1+6) 2.42"
+    },
+    "qemu-system-riscv64": {
+      "path": "/usr/bin/qemu-system-riscv64",
+      "version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+    }
+  },
+  "cases": [
+    {
+      "case": "O0",
+      "expected_failure": false,
+      "returncode": 0,
+      "timed_out": false,
+      "pass_marker": true,
+      "fail_marker": false,
+      "accepted": true
+    },
+    {
+      "case": "O2",
+      "expected_failure": false,
+      "returncode": 0,
+      "timed_out": false,
+      "pass_marker": true,
+      "fail_marker": false,
+      "accepted": true
+    },
+    {
+      "case": "missing-sepc-write",
+      "expected_failure": true,
+      "returncode": 0,
+      "timed_out": false,
+      "pass_marker": false,
+      "fail_marker": true,
+      "accepted": true
+    },
+    {
+      "case": "missing-s0-restore",
+      "expected_failure": true,
+      "returncode": 0,
+      "timed_out": false,
+      "pass_marker": false,
+      "fail_marker": true,
+      "accepted": true
+    }
+  ],
+  "scope": "Actual entry.S/trapentry.S and SBI/console; fixture kern_init/trap; real QEMU DTB is not parsed; no allocator/production handlers/grading."
+}

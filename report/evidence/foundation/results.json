@@ -1,0 +1,35 @@
+{
+  "full-build": {
+    "command": [
+      "make",
+      "-j2"
+    ],
+    "returncode": 2,
+    "log": "/tmp/os2026-lab3-foundation-in91q43h/full-build.log"
+  },
+  "memory-objects": {
+    "command": [
+      "make",
+      "obj/kern/mm/pmm.o",
+      "obj/kern/mm/best_fit_pmm.o"
+    ],
+    "returncode": 0,
+    "log": "/tmp/os2026-lab3-foundation-in91q43h/memory-objects.log"
+  },
+  "page-init": {
+    "command": [
+      "python3",
+      "tools/check_page_init.py"
+    ],
+    "returncode": 0,
+    "log": "/tmp/os2026-lab3-foundation-in91q43h/page-init.log"
+  },
+  "best-fit": {
+    "command": [
+      "python3",
+      "tools/check_best_fit.py"
+    ],
+    "returncode": 0,
+    "log": "/tmp/os2026-lab3-foundation-in91q43h/best-fit.log"
+  }
+}

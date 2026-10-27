@@ -1,0 +1,1 @@
+qemu-system-riscv64 -machine virt -m 128M -smp 1 -nographic -bios default -kernel /home/lhl/os2026/lab3/tests/module1/results/run-stt3fs9o/missing-s0-restore/ucore.img -monitor none

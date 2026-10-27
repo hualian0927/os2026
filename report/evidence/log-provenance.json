@@ -1,0 +1,122 @@
+{
+  "foundation/before-loader.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/before-loader.log",
+    "sha256": "49cd3ee03c89e3d7a6da11e46708f902e573c974a23308c170f8552a11530171"
+  },
+  "foundation/before-kernel.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/before-kernel.log",
+    "sha256": "5f7c24eabe2af53db35036d2fb5dad0cd3fbd17813fd3063f82ef3add9cac3ec"
+  },
+  "foundation/before-page-fault.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/before-page-fault.log",
+    "sha256": "ba8b6ac06d979d87badedcaa67af9e3f27e6c2345eb95067277a42378e9fce8e"
+  },
+  "foundation/before-paging-gdb.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/before-paging-gdb.log",
+    "sha256": "ed7cad97ec87e45e4230293fc28b6ab6ff8fe4baef4e9c5ac90e42a6783f087d"
+  },
+  "foundation/after-paging-gdb.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/after-paging-gdb.log",
+    "sha256": "2d8480fe2784e8d156560be50cb5eda6cc9483615a89f828693cf4e1d81c950d"
+  },
+  "foundation/after-foundation.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/after-foundation.log",
+    "sha256": "0c00955cb8c8774643390aaa3acf4c42706b6cdc7d12976508ef1d5f312b8d15"
+  },
+  "foundation/make-debug.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/make-debug.log",
+    "sha256": "0c00955cb8c8774643390aaa3acf4c42706b6cdc7d12976508ef1d5f312b8d15"
+  },
+  "foundation/make-gdb.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/make-gdb.log",
+    "sha256": "c534644984b403f53d6f62a9f1a802ba800f2c348b0e215b9d7b5707fc6eb380"
+  },
+  "foundation/grade-loader-console.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/grade-loader-console.log",
+    "sha256": "c3ec7fa9c7a069a68129c84acfd1ae9f66026b5841c1f75b1fb9e01ef4b85934"
+  },
+  "foundation/grade-kernel-console.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/grade-kernel-console.log",
+    "sha256": "0c00955cb8c8774643390aaa3acf4c42706b6cdc7d12976508ef1d5f312b8d15"
+  },
+  "foundation/grade-loader-command.txt": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/grade-loader-command.txt",
+    "sha256": "4c38992f8a99aca7c379bfebd07a1d34ae69e14d33652198de8aa26d96bbf17c"
+  },
+  "foundation/grade-kernel-command.txt": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/grade-kernel-command.txt",
+    "sha256": "8aae11fd842767f0e7be6dd456f1145fa0bf04ef46c0956ab59b4aa78a295e4c"
+  },
+  "foundation/page-init.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/page-init.log",
+    "sha256": "93f67e49dd9edb824a0eb8bce01e5c0f18e399da94551ff53b751352fcec7929"
+  },
+  "foundation/best-fit.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/best-fit.log",
+    "sha256": "6e9e07120e04e61bbd1cc07309f9459d8fad30ed053581f0d6fca4aa3702de84"
+  },
+  "foundation/memory-objects.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/memory-objects.log",
+    "sha256": "5d0d58a1b29a3eafee9d8e8160f3ba6bea355368005a0bdc0ce3a00537ffe40b"
+  },
+  "foundation/full-build.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/full-build.log",
+    "sha256": "aa547ec08a837b9fb3a571721de4131618607b291034c8b73ba22f49bc777578"
+  },
+  "foundation/results.json": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/results.json",
+    "sha256": "16e1f5e7050aba67e1c02f49b32ccb04c7540a3e99aba1e27164e5716a56f310"
+  },
+  "foundation/validation.json": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/validation.json",
+    "sha256": "4e2a35c2cc027499cb14d913a5d98df4c90744e34b2c643dd237df8140ed8afa"
+  },
+  "foundation/after-paging.gdb": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/after-paging.gdb",
+    "sha256": "16d695446afc919a93d3a77f28d97aefa6244abbf5134f836892a9f6b3c5123f"
+  },
+  "foundation/Makefile.diff": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/Makefile.diff",
+    "sha256": "3002f56cdf0262d68bad1fc5b412349ce4318d0fbd302274a7b7a1104c92ddd3"
+  },
+  "foundation/kern_init_entry.S.diff": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/kern_init_entry.S.diff",
+    "sha256": "cdaa99c7aca43184066e525462a1a5973ef8e40893b64d5f33d73eab3db80e0f"
+  },
+  "foundation/tools_grade.sh.diff": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/tools_grade.sh.diff",
+    "sha256": "1fc122acb7c772aa7bf9966d2c4e5acf1a014a9562485b70118de05396293a9c"
+  },
+  "foundation/best-fit-console-O0.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/regression/obj/check-best-fit/console-O0.log",
+    "sha256": "ea827c7c327773a98e01daa11abee06fecd57ae6f3e5c1740ef910385606e6f7"
+  },
+  "foundation/best-fit-console-O2.log": {
+    "original_path": "/tmp/os2026-lab3-foundation-in91q43h/regression/obj/check-best-fit/console-O2.log",
+    "sha256": "9dbc57276182c88e2b79dc979aa52fdd934e08e3b906bd8b518f30e9720469da"
+  },
+  "module1-first-run/validation.json": {
+    "original_path": "/tmp/os2026-lab3-trap-entry-kzjudmoe/validation.json",
+    "sha256": "39419faeb25e3b467af73305434ac84e5a40242d7efa957238e84aa66e835dee"
+  },
+  "module1-first-run/full-build.log": {
+    "original_path": "/tmp/os2026-lab3-trap-entry-kzjudmoe/full-build.log",
+    "sha256": "be257452a9de99cbca69321c6176c7946c3bb1feffdfb3bbb8bc61df099d4328"
+  },
+  "module1-first-run/trap-object.log": {
+    "original_path": "/tmp/os2026-lab3-trap-entry-kzjudmoe/trap-object.log",
+    "sha256": "8ac3def7c81587ac3208b1f4dfaa81dc4321634ca2eac0d84086e6350191966f"
+  },
+  "module1-first-run/trapentry.diff": {
+    "original_path": "/tmp/os2026-lab3-trap-entry-kzjudmoe/trapentry.diff",
+    "sha256": "0ec4425b7fe0a110c9c228d26318826052175aca511b8c6c4ea0fac49fce71b0"
+  },
+  "module1-first-run/O0-console.log": {
+    "original_path": "/tmp/os2026-lab3-trap-entry-kzjudmoe/O0/console.log",
+    "sha256": "e5026327b573431f863fa67dd7bdbe4702e9a30990ca2b937f0e7f993bc03817"
+  },
+  "module1-first-run/O2-console.log": {
+    "original_path": "/tmp/os2026-lab3-trap-entry-kzjudmoe/O2/console.log",
+    "sha256": "e5026327b573431f863fa67dd7bdbe4702e9a30990ca2b937f0e7f993bc03817"
+  }
+}

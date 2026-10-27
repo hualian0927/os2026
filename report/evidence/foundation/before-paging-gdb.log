@@ -1,0 +1,20 @@
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0x80200000
+
+Breakpoint 1, 0x0000000080200000 in ?? ()
+pc             0x80200000	0x80200000
+a0             0x0	0
+a1             0x87e00000	2279604224
+satp           0x0	0
+Hardware assisted breakpoint 2 at 0x80200034
+
+Breakpoint 2, 0x0000000080200034 in ?? ()
+pc             0x80200034	0x80200034
+satp           0x0	0
+0x0000000080200038 in ?? ()
+pc             0x80200038	0x80200038
+satp           0x8000000000080205	-9223372036854251003
+[Inferior 1 (process 1) detached]
+/tmp/os2026-lab3-foundation-in91q43h/before-paging.gdb:14: Error in sourced command file:
+Cannot access memory at address 0x80200038

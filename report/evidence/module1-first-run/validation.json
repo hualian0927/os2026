@@ -1,0 +1,27 @@
+{
+  "changed_files": [
+    "kern/trap/trapentry.S"
+  ],
+  "only_two_placeholder_regions_changed": true,
+  "SAVE_ALL_unchanged": true,
+  "all_other_files_unchanged": true,
+  "object_build": {
+    "command": [
+      "make",
+      "obj/kern/trap/trapentry.o"
+    ],
+    "returncode": 0
+  },
+  "full_build": {
+    "command": [
+      "make",
+      "-j2"
+    ],
+    "returncode": 2
+  },
+  "runtime": {
+    "O0": "8 real Trap round trips passed",
+    "O2": "8 real Trap round trips passed"
+  },
+  "scope": "test trap() fixture, not production handlers or full Lab3 grading"
+}

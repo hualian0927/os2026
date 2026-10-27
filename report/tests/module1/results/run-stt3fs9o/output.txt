@@ -1,0 +1,20 @@
+Results: /home/lhl/os2026/lab3/tests/module1/results/run-stt3fs9o
+O0: PASS frame: actual tf, 288-byte layout, original SP, 16-byte alignment
+O0: PASS registers: entry/return slots, RA, gp/tp preserved, real C calls/clobbers
+O0: PASS edits: selected EPC successor, a0/s0/s1/t0 frame changes
+O0: PASS stack: 64 successive traps, caller/probe SP stable, driver callee-saved ABI
+O0: PASS state: S-mode SPP, SIE/SPIE transitions, sscratch, diagnostic fields
+O0: MODULE_ONE_PASS: 64 real traps; all 8 state/edit combinations repeated 8 times
+PASS image: O0
+O2: PASS frame: actual tf, 288-byte layout, original SP, 16-byte alignment
+O2: PASS registers: entry/return slots, RA, gp/tp preserved, real C calls/clobbers
+O2: PASS edits: selected EPC successor, a0/s0/s1/t0 frame changes
+O2: PASS stack: 64 successive traps, caller/probe SP stable, driver callee-saved ABI
+O2: PASS state: S-mode SPP, SIE/SPIE transitions, sscratch, diagnostic fields
+O2: MODULE_ONE_PASS: 64 real traps; all 8 state/edit combinations repeated 8 times
+PASS image: O2
+missing-sepc-write: MODULE_ONE_FAIL round=0 trap_count=1 at /home/lhl/os2026/lab3/tests/module1/check.c:62: assertion failed: trap_count == round_id
+REJECTED expected defect: missing-sepc-write
+missing-s0-restore: MODULE_ONE_FAIL round=0 trap_count=1 at /home/lhl/os2026/lab3/tests/module1/check.c:136: assertion failed: observed[i] == expected
+REJECTED expected defect: missing-s0-restore
+Production tree unchanged: True

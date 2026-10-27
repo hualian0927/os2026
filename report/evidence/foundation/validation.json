@@ -1,0 +1,29 @@
+{
+  "changed_files": [
+    "Makefile",
+    "kern/init/entry.S",
+    "tools/grade.sh"
+  ],
+  "grading_only_load_argument_changed": true,
+  "all_other_files_unchanged": true,
+  "production_handlers_untouched": true,
+  "tests_untouched": true,
+  "before_loader_next_address": "0x0",
+  "before_paging_fault": {
+    "cause": "0xc",
+    "epc": "0x80200038"
+  },
+  "isolated_real_startup_pass": true,
+  "make_debug_gdb_pass": true,
+  "page_init_checks": 13,
+  "best_fit_optimization_levels": [
+    "-O0",
+    "-O2"
+  ],
+  "best_fit_bitmap_operations_per_level": 512,
+  "sie_wrappers_checked_states": [
+    0,
+    1
+  ],
+  "full_build": "blocked by existing unimplemented handlers; no production Trap runtime verified"
+}

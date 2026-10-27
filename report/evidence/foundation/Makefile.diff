@@ -1,0 +1,55 @@
+--- before/Makefile
++++ after/Makefile
+@@ -27,7 +27,8 @@
+ HOSTCC		:= gcc
+ HOSTCFLAGS	:= -Wall -O2
+ 
+-GDB		:= $(GCCPREFIX)gdb
++GDB		?= gdb-multiarch
++GDBPORT		?= 1234
+ 
+ CC		:= $(GCCPREFIX)gcc
+ CFLAGS  := -mcmodel=medany -std=gnu99 -Wno-unused -Werror 
+@@ -161,34 +162,35 @@
+ TARGETS: $(TARGETS)
+ 
+ .DEFAULT_GOAL := TARGETS
+-.PHONY: qemu spike test
++.PHONY: qemu spike test debug gdb
+ qemu: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000
++		-kernel $(UCOREIMG)
+ 
+ debug: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000\
+-		-s -S
++		-kernel $(UCOREIMG) \
++		-gdb tcp:127.0.0.1:$(GDBPORT) -S
+ 
+ gdb:
+-	riscv64-unknown-elf-gdb \
++	$(GDB) -q \
++    -ex 'set pagination off' \
+     -ex 'file bin/kernel' \
+     -ex 'set arch riscv:rv64' \
+-    -ex 'target remote localhost:1234'
++    -ex 'target remote localhost:$(GDBPORT)'
+ 
+ test: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000
++		-kernel $(UCOREIMG)
+ spike: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(SPIKE) $(UCOREIMG)
+ 

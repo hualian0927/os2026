@@ -1,0 +1,373 @@
+--- archive/Makefile
++++ code/Makefile
+@@ -27,7 +27,8 @@
+ HOSTCC		:= gcc
+ HOSTCFLAGS	:= -Wall -O2
+ 
+-GDB		:= $(GCCPREFIX)gdb
++GDB		?= gdb-multiarch
++GDBPORT		?= 1234
+ 
+ CC		:= $(GCCPREFIX)gcc
+ CFLAGS  := -mcmodel=medany -std=gnu99 -Wno-unused -Werror 
+@@ -161,34 +162,35 @@
+ TARGETS: $(TARGETS)
+ 
+ .DEFAULT_GOAL := TARGETS
+-.PHONY: qemu spike test
++.PHONY: qemu spike test debug gdb
+ qemu: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000
++		-kernel $(UCOREIMG)
+ 
+ debug: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000\
+-		-s -S
++		-kernel $(UCOREIMG) \
++		-gdb tcp:127.0.0.1:$(GDBPORT) -S
+ 
+ gdb:
+-	riscv64-unknown-elf-gdb \
++	$(GDB) -q \
++    -ex 'set pagination off' \
+     -ex 'file bin/kernel' \
+     -ex 'set arch riscv:rv64' \
+-    -ex 'target remote localhost:1234'
++    -ex 'target remote localhost:$(GDBPORT)'
+ 
+ test: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(QEMU) \
+ 		-machine virt \
+ 		-nographic \
+ 		-bios default \
+-		-device loader,file=$(UCOREIMG),addr=0x80200000
++		-kernel $(UCOREIMG)
+ spike: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
+ 	$(V)$(SPIKE) $(UCOREIMG)
+ 
+--- archive/kern/init/entry.S
++++ code/kern/init/entry.S
+@@ -29,8 +29,7 @@
+     csrw    satp, t0
+     # 使用 sfence.vma 指令刷新 TLB
+     sfence.vma
+-    # 从此，我们给内核搭建出了一个完美的虚拟内存空间！
+-    #nop # 可能映射的位置有些bug。。插入一个nop
++    # 跳到高地址前仍从低地址取指，由启动页表的恒等映射保障。
+     
+     # 我们在虚拟内存空间中：随意将 sp 设置为虚拟地址！
+     lui sp, %hi(bootstacktop)
+@@ -61,9 +60,11 @@
+     .global boot_page_table_sv39
+ # 分配 4KiB 内存给预设的三级页表
+ boot_page_table_sv39:
++    # 低地址0x80000000 -> 物理0x80000000，保障启用分页后的启动代码。
++    .zero 8 * 2
++    .quad (0x80000 << 10) | 0xcf # VRWXAD
++    .zero 8 * 508
+     # 0xffffffff_c0000000 map to 0x80000000 (1G)
+-    # 前 511 个页表项均设置为 0 ，因此 V=0 ，意味着是空的(unmapped)
+-    .zero 8 * 511
+     # 设置最后一个页表项，PPN=0x80000，标志位 VRWXAD 均为 1
+     .quad (0x80000 << 10) | 0xcf # VRWXAD
+ 
+--- archive/kern/mm/best_fit_pmm.c
++++ code/kern/mm/best_fit_pmm.c
+@@ -5,6 +5,133 @@
+ #include <stdio.h>
+ 
+ //lab2 请补充你在lab2中的代码
++//lab2 function2-2 2412351
++// 迁移自实验二完整Best-Fit，保留实验三已有的自测函数。
++static free_area_t free_area;
++
++#define free_list (free_area.free_list)
++#define nr_free (free_area.nr_free)
++
++static void best_fit_check(void);
++
++static void
++best_fit_init(void) {
++    list_init(&free_list);
++    nr_free = 0;
++}
++
++/* Only free block heads are linked, in increasing physical address order.
++ * Insert once, then merge with physically contiguous predecessor/successor. */
++static void
++best_fit_insert(struct Page *base) {
++    list_entry_t *next = list_next(&free_list);
++    while (next != &free_list && le2page(next, page_link) < base) {
++        next = list_next(next);
++    }
++    list_add_before(next, &base->page_link);
++
++    list_entry_t *prev = list_prev(&base->page_link);
++    if (prev != &free_list) {
++        struct Page *p = le2page(prev, page_link);
++        assert(p + p->property <= base);
++        if (p + p->property == base) {
++            p->property += base->property;
++            ClearPageProperty(base);
++            base->property = 0;
++            list_del(&base->page_link);
++            base = p;
++        }
++    }
++    next = list_next(&base->page_link);
++    if (next != &free_list) {
++        struct Page *p = le2page(next, page_link);
++        assert(base + base->property <= p);
++        if (base + base->property == p) {
++            base->property += p->property;
++            ClearPageProperty(p);
++            p->property = 0;
++            list_del(&p->page_link);
++        }
++    }
++}
++
++static void
++best_fit_init_memmap(struct Page *base, size_t n) {
++    assert(n > 0);
++    for (struct Page *p = base; p != base + n; p++) {
++        assert(PageReserved(p));
++        p->flags = 0;
++        p->property = 0;
++        set_page_ref(p, 0);
++    }
++    base->property = n;
++    SetPageProperty(base);
++    nr_free += n;
++    best_fit_insert(base);
++}
++
++static struct Page *
++best_fit_alloc_pages(size_t n) {
++    assert(n > 0);
++    if (n > nr_free) {
++        return NULL;
++    }
++    struct Page *best = NULL;
++    list_entry_t *le = &free_list;
++    while ((le = list_next(le)) != &free_list) {
++        struct Page *p = le2page(le, page_link);
++        /* Strict comparison keeps the lower-address block on a size tie. */
++        if (p->property >= n &&
++            (best == NULL || p->property < best->property)) {
++            best = p;
++        }
++    }
++    if (best != NULL) {
++        size_t remaining = best->property - n;
++        list_entry_t *prev = list_prev(&best->page_link);
++        list_del(&best->page_link);
++        ClearPageProperty(best);
++        best->property = 0;
++        if (remaining != 0) {
++            struct Page *rest = best + n;
++            rest->property = remaining;
++            SetPageProperty(rest);
++            list_add(prev, &rest->page_link);
++        }
++        nr_free -= n;
++    }
++    return best;
++}
++
++static void
++best_fit_free_pages(struct Page *base, size_t n) {
++    assert(n > 0);
++    for (struct Page *p = base; p != base + n; p++) {
++        assert(!PageReserved(p) && !PageProperty(p));
++        p->flags = 0;
++        p->property = 0;
++        set_page_ref(p, 0);
++    }
++    base->property = n;
++    SetPageProperty(base);
++    nr_free += n;
++    best_fit_insert(base);
++}
++
++static size_t
++best_fit_nr_free_pages(void) {
++    return nr_free;
++}
++
++const struct pmm_manager best_fit_pmm_manager = {
++    .name = "best_fit_pmm_manager",
++    .init = best_fit_init,
++    .init_memmap = best_fit_init_memmap,
++    .alloc_pages = best_fit_alloc_pages,
++    .free_pages = best_fit_free_pages,
++    .nr_free_pages = best_fit_nr_free_pages,
++    .check = best_fit_check,
++};
+ 
+ static void
+ basic_check(void) {
+--- archive/kern/mm/pmm.c
++++ code/kern/mm/pmm.c
+@@ -35,7 +35,8 @@
+ 
+ // init_pmm_manager - initialize a pmm_manager instance
+ static void init_pmm_manager(void) {
+-    pmm_manager = &default_pmm_manager;
++    // 本工程沿用实验二的Best-Fit，作为实验三的默认管理器。
++    pmm_manager = &best_fit_pmm_manager;
+     cprintf("memory management: %s\n", pmm_manager->name);
+     pmm_manager->init();
+ }
+@@ -82,6 +83,71 @@
+ }
+ 
+ //lab2 请补充你在lab2中的代码
++//lab2 function1 2412351
++// 迁移自实验二page_init，内存边界使用实验三已有布局推导。
++static void page_init(void) {
++    extern char end[];
++    uint64_t mem_base = get_memory_base();
++    uint64_t mem_size = get_memory_size();
++    const uintptr_t memory_limit = KERNTOP - PHYSICAL_MEMORY_OFFSET;
++    const uintptr_t kernel_begin_pa = KERNBASE - PHYSICAL_MEMORY_OFFSET;
++
++    if (mem_base == 0 || mem_size == 0) {
++        panic("page_init: invalid device-tree memory range");
++    }
++    if (mem_size > (uint64_t)-1 - mem_base) {
++        panic("page_init: device-tree memory range overflows");
++    }
++    uint64_t mem_end = mem_base + mem_size;  // exclusive reported end
++    uintptr_t managed_end = ROUNDDOWN(
++        mem_end < memory_limit ? mem_end : memory_limit, PGSIZE);
++    if (managed_end <= DRAM_BASE) {
++        panic("page_init: no manageable DRAM pages");
++    }
++
++    va_pa_offset = PHYSICAL_MEMORY_OFFSET;
++    uintptr_t kernel_end_pa = PADDR((uintptr_t)end);
++    if (mem_base > kernel_begin_pa ||
++        kernel_end_pa < kernel_begin_pa || kernel_end_pa >= managed_end) {
++        panic("page_init: kernel is outside the usable memory range");
++    }
++
++    // pages[0] describes physical page nbase, including reserved DRAM pages.
++    size_t last_ppn = PPN(managed_end);
++    size_t page_count = last_ppn - nbase;
++    uintptr_t pages_pa = ROUNDUP(kernel_end_pa, PGSIZE);
++    // Check the multiplication and placement before writing any descriptors.
++    if (pages_pa < kernel_end_pa || pages_pa > managed_end ||
++        page_count > (managed_end - pages_pa) / sizeof(struct Page)) {
++        panic("page_init: insufficient memory for page descriptors");
++    }
++    size_t pages_bytes = page_count * sizeof(struct Page);
++    uintptr_t descriptors_end_pa = pages_pa + pages_bytes;
++
++    npage = last_ppn;
++    pages = (struct Page *)(pages_pa + va_pa_offset);
++    for (size_t i = 0; i < page_count; i++) {
++        struct Page *p = &pages[i];
++        p->flags = 0;
++        SetPageReserved(p);
++        p->property = 0;
++        set_page_ref(p, 0);
++        list_init(&p->page_link);
++    }
++
++    cprintf("physical memory map:\n");
++    cprintf("  memory: 0x%016lx, [0x%016lx, 0x%016lx].\n",
++            (unsigned long)mem_size, (unsigned long)mem_base,
++            (unsigned long)(mem_end - 1));
++    cprintf("  managed end (exclusive): 0x%016lx\n",
++            (unsigned long)managed_end);
++
++    // Preserve the partial page containing the descriptor array's tail.
++    uintptr_t free_begin = ROUNDUP(descriptors_end_pa, PGSIZE);
++    if (free_begin < managed_end) {
++        init_memmap(pa2page(free_begin), (managed_end - free_begin) / PGSIZE);
++    }
++}
+ 
+ /* pmm_init - initialize the physical memory management */
+ void pmm_init(void) {
+--- archive/kern/trap/trapentry.S
++++ code/kern/trap/trapentry.S
+@@ -56,7 +56,45 @@
+ 
+     .macro RESTORE_ALL
+ 
+-    #lab3 function1 YOUR CODE
++    #lab3 function1 2412351
++    # 从处理后的帧恢复返回控制状态，s0/s1稍后恢复为原寄存器值。
++    LOAD s0, 32*REGBYTES(sp)
++    LOAD s1, 33*REGBYTES(sp)
++    csrw sstatus, s0
++    csrw sepc, s1
++
++    LOAD x1, 1*REGBYTES(sp)
++    LOAD x3, 3*REGBYTES(sp)
++    LOAD x4, 4*REGBYTES(sp)
++    LOAD x5, 5*REGBYTES(sp)
++    LOAD x6, 6*REGBYTES(sp)
++    LOAD x7, 7*REGBYTES(sp)
++    LOAD x8, 8*REGBYTES(sp)
++    LOAD x9, 9*REGBYTES(sp)
++    LOAD x10, 10*REGBYTES(sp)
++    LOAD x11, 11*REGBYTES(sp)
++    LOAD x12, 12*REGBYTES(sp)
++    LOAD x13, 13*REGBYTES(sp)
++    LOAD x14, 14*REGBYTES(sp)
++    LOAD x15, 15*REGBYTES(sp)
++    LOAD x16, 16*REGBYTES(sp)
++    LOAD x17, 17*REGBYTES(sp)
++    LOAD x18, 18*REGBYTES(sp)
++    LOAD x19, 19*REGBYTES(sp)
++    LOAD x20, 20*REGBYTES(sp)
++    LOAD x21, 21*REGBYTES(sp)
++    LOAD x22, 22*REGBYTES(sp)
++    LOAD x23, 23*REGBYTES(sp)
++    LOAD x24, 24*REGBYTES(sp)
++    LOAD x25, 25*REGBYTES(sp)
++    LOAD x26, 26*REGBYTES(sp)
++    LOAD x27, 27*REGBYTES(sp)
++    LOAD x28, 28*REGBYTES(sp)
++    LOAD x29, 29*REGBYTES(sp)
++    LOAD x30, 30*REGBYTES(sp)
++    LOAD x31, 31*REGBYTES(sp)
++    # 最后恢复sp；在此之前所有帧读取都以当前sp为基准。
++    LOAD x2, 2*REGBYTES(sp)
+ 
+     .endm
+ 
+@@ -65,7 +103,10 @@
+ __alltraps:
+     SAVE_ALL
+ 
+-    #lab3 function1 YOUR CODE
++    #lab3 function1 2412351
++    # a0传入当前Trap frame地址，C调用返回后仍用同一帧恢复。
++    mv a0, sp
++    call trap
+     # sp should be the same as before "jal trap"
+ 
+     .globl __trapret
+--- archive/tools/grade.sh
++++ code/tools/grade.sh
+@@ -32,7 +32,7 @@
+     echo "Running $label..."
+     timeout "${seconds}s" qemu-system-riscv64 \
+         -machine virt -nographic -bios default \
+-        -device loader,file=bin/ucore.img,addr=0x80200000 \
++        -kernel bin/ucore.img \
+         -serial file:"$output" -monitor none -no-reboot >/dev/null 2>&1 || true
+ 
+     passed=1

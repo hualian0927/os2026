@@ -1,0 +1,42 @@
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0x80200000
+
+Breakpoint 1, 0x0000000080200000 in ?? ()
+pc             0x80200000	0x80200000
+a0             0x0	0
+a1             0x87e00000	2279604224
+satp           0x0	0
+0x87e00000:	0xd0	0x0d	0xfe	0xed
+Hardware assisted breakpoint 2 at 0xffffffffc0201702: file /tmp/os2026-lab3-foundation-in91q43h/foundation_check.c, line 35.
+
+Breakpoint 2, kern_init () at /tmp/os2026-lab3-foundation-in91q43h/foundation_check.c:35
+35	    memset(edata, 0, end - edata);
+pc             0xffffffffc0201702	0xffffffffc0201702 <kern_init>
+sp             0xffffffffc0205000	0xffffffffc0205000
+satp           0x8000000000080205	-9223372036854251003
+$1 = 0xffffffffc0205000
+$2 = 0x0
+$3 = 0x87e00000
+0xffffffffc0205010:	0x00000000200000cf
+0xffffffffc0205ff8:	0x00000000200000cf
+Hardware assisted breakpoint 3 at 0xffffffffc0200de8: file /home/lhl/os2026/lab3/lab3_new/kern/driver/dtb.c, line 108.
+
+Breakpoint 3, dtb_init () at /home/lhl/os2026/lab3/lab3_new/kern/driver/dtb.c:108
+108	    cprintf("DTB Init\n");
+Hardware assisted breakpoint 4 at 0xffffffffc020010c: file /home/lhl/os2026/lab3/lab3_new/kern/mm/pmm.c, line 39.
+
+Breakpoint 4, pmm_init () at /home/lhl/os2026/lab3/lab3_new/kern/mm/pmm.c:159
+159	    init_pmm_manager();
+kern_init () at /tmp/os2026-lab3-foundation-in91q43h/foundation_check.c:45
+45	    assert(strcmp(pmm_manager->name, "best_fit_pmm_manager") == 0);
+$4 = 0x88000
+$5 = 0x80000
+$6 = 0xffffffffc0207000
+Hardware assisted breakpoint 5 at 0xffffffffc020168e: file /home/lhl/os2026/lab3/lab3_new/libs/sbi.c, line 17.
+
+Breakpoint 5, sbi_shutdown () at /home/lhl/os2026/lab3/lab3_new/libs/sbi.c:45
+45		sbi_call(SBI_SHUTDOWN, 0, 0, 0);
+sstatus        0x8000000200006000	-9223372028264816640
+sie            0x0	0
+[Inferior 1 (process 1) detached]

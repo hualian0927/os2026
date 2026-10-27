@@ -1,0 +1,1 @@
+/usr/bin/qemu-system-riscv64 -machine virt -nographic -bios default -kernel /tmp/os2026-lab3-foundation-in91q43h/after-fixture/ucore.img -serial file:/tmp/os2026-lab3-foundation-in91q43h/grade-kernel-console.log -monitor none -no-reboot
