@@ -1,0 +1,57 @@
+[
+  {
+    "image": "report/images/A01-foundation.png",
+    "capture": "QWidget.grab of a visible X11 read-only log viewer; no image editing",
+    "source": "report/evidence/2026-10-27-report/foundation-run.log",
+    "start": "FOUNDATION_C_ENTRY",
+    "end_exclusive": null,
+    "source_sha256": "ca5c22b60f796bfc953345d0375e87eb1429fd1a22cba8df33a437056bf0c750",
+    "image_sha256": "d255fbed74ef97512112e71b6f206791c4c9689825e27b714ba72c85883cf1f1",
+    "width": 2320,
+    "height": 529
+  },
+  {
+    "image": "report/images/A02-boot-gdb.png",
+    "capture": "QWidget.grab of a visible X11 read-only log viewer; no image editing",
+    "source": "report/evidence/2026-10-27-report/boot-gdb.log",
+    "start": null,
+    "end_exclusive": null,
+    "source_sha256": "64392e07bb2e6044530f5f7d27a7cf2cf6821876b1ca4777f6a0f095b231de12",
+    "image_sha256": "91c6282187cce79d290edbd7c59932daa90d8eff857013f6537302edc862535f",
+    "width": 2320,
+    "height": 837
+  },
+  {
+    "image": "report/images/A03-module1.png",
+    "capture": "QWidget.grab of a visible X11 read-only log viewer; no image editing",
+    "source": "report/evidence/2026-10-27-report/module1-run.log",
+    "start": null,
+    "end_exclusive": "missing-sepc-write:",
+    "source_sha256": "0acb671cb824e5b8eb2dfa3f52438ac1a2b654fbff5f71d12a748489953dab23",
+    "image_sha256": "cbbdac138f8fa5b99251fc0799d275c894b5bba097d673557bf7569dd1cff03e",
+    "width": 2320,
+    "height": 485
+  },
+  {
+    "image": "report/images/A04-frame-gdb.png",
+    "capture": "QWidget.grab of a visible X11 read-only log viewer; no image editing",
+    "source": "report/evidence/2026-10-27-report/frame-gdb.log",
+    "start": null,
+    "end_exclusive": null,
+    "source_sha256": "7998b034bf1d56c005b788b10b93fb821ffcd86453b1dba2bdb1dc6a9a742de4",
+    "image_sha256": "4b934bd516e60a3d474d08ae4209baacf754f4e630b792a061985404dfeaa42c",
+    "width": 2320,
+    "height": 815
+  },
+  {
+    "image": "report/images/A05-negative-controls.png",
+    "capture": "QWidget.grab of a visible X11 read-only log viewer; no image editing",
+    "source": "report/evidence/2026-10-27-report/module1-run.log",
+    "start": "missing-sepc-write:",
+    "end_exclusive": null,
+    "source_sha256": "0acb671cb824e5b8eb2dfa3f52438ac1a2b654fbff5f71d12a748489953dab23",
+    "image_sha256": "b83359b44e0aa701770b26daa2104ccc307c5aa9ce9315b1b61ae42d861b17ad",
+    "width": 2320,
+    "height": 243
+  }
+]

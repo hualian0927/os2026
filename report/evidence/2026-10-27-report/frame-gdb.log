@@ -1,0 +1,31 @@
+$ gdb-multiarch -batch -q -x /home/lhl/os2026-lab3/report/evidence/2026-10-27-report/frame-gdb.gdb
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0xffffffffc0200e52: file /home/lhl/os2026-lab3/report/tests/module1/check.c, line 61.
+
+Breakpoint 1, inspect_frame (tf=0xffffffffc0203d50) at /home/lhl/os2026-lab3/report/tests/module1/check.c:61
+61	    memcpy(saved, &tf->gpr, sizeof(saved));
+$1 = 2
+$2 = 288
+$3 = 0xffffffffc0203d50
+$4 = 0xffffffffc0203e70
+$5 = 1
+$6 = 0xffffffffc0203e70
+$7 = 0x101
+$8 = 0xffffffffc0200be0
+$9 = 0x8000000200006100
+Hardware assisted breakpoint 2 at 0xffffffffc0200be8: file /home/lhl/os2026-lab3/report/tests/module1/probe.S, line 140.
+
+Temporary breakpoint 2, probe_resume () at /home/lhl/os2026-lab3/report/tests/module1/probe.S:140
+140	    sd t0, 104(sp)
+pc             0xffffffffc0200be8	0xffffffffc0200be8 <probe_resume>
+sp             0xffffffffc0203e70	0xffffffffc0203e70
+ra             0x101	0x101
+a0             0xabc	2748
+s0             0xdef               0xdef
+s1             0x123	291
+t0             0x456	1110
+$10 = 0x0
+$11 = 0x1
+$12 = 0x0
+[Inferior 1 (process 1) detached]

@@ -1,0 +1,32 @@
+$ gdb-multiarch -batch -q -x /home/lhl/os2026-lab3/report/evidence/2026-10-27-report/boot-gdb.gdb
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0x80200000
+
+Breakpoint 1, 0x0000000080200000 in ?? ()
+pc             0x80200000	0x80200000
+a0             0x0	0
+a1             0x87e00000	2279604224
+satp           0x0	0
+0x87e00000:	0xd0	0x0d	0xfe	0xed
+Hardware assisted breakpoint 2 at 0xffffffffc0201702: file /home/lhl/os2026-lab3/report/tests/foundation/foundation_check.c, line 35.
+
+Breakpoint 2, kern_init () at /home/lhl/os2026-lab3/report/tests/foundation/foundation_check.c:35
+35	    memset(edata, 0, end - edata);
+pc             0xffffffffc0201702	0xffffffffc0201702 <kern_init>
+sp             0xffffffffc0205000	0xffffffffc0205000
+satp           0x8000000000080205	-9223372036854251003
+$1 = 0xffffffffc0205000
+0xffffffffc0205010:	0x00000000200000cf
+0xffffffffc0205ff8:	0x00000000200000cf
+Hardware assisted breakpoint 3 at 0xffffffffc020010c: file /home/lhl/os2026-lab3/code/kern/mm/pmm.c, line 39.
+
+Breakpoint 3, pmm_init () at /home/lhl/os2026-lab3/code/kern/mm/pmm.c:159
+159	    init_pmm_manager();
+kern_init () at /home/lhl/os2026-lab3/report/tests/foundation/foundation_check.c:45
+45	    assert(strcmp(pmm_manager->name, "best_fit_pmm_manager") == 0);
+$2 = 0x88000
+$3 = 0x80000
+$4 = 0xffffffffc0207000
+0xffffffffc02022c8:	"best_fit_pmm_manager"
+[Inferior 1 (process 1) detached]

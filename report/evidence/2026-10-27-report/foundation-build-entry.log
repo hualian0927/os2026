@@ -1,0 +1,2 @@
+$ python3 /home/lhl/os2026-lab3/report/tests/foundation/build_fixture.py /home/lhl/os2026-lab3/code /tmp/os2026-lab3-report-qj74bh6h/foundation
+Built isolated fixture: /tmp/os2026-lab3-report-qj74bh6h/foundation/kernel

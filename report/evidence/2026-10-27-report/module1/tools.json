@@ -1,0 +1,18 @@
+{
+  "riscv64-unknown-elf-gcc": {
+    "path": "/usr/bin/riscv64-unknown-elf-gcc",
+    "version": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0"
+  },
+  "riscv64-unknown-elf-ld": {
+    "path": "/usr/bin/riscv64-unknown-elf-ld",
+    "version": "GNU ld (2.42-1ubuntu1+6) 2.42"
+  },
+  "riscv64-unknown-elf-objcopy": {
+    "path": "/usr/bin/riscv64-unknown-elf-objcopy",
+    "version": "GNU objcopy (2.42-1ubuntu1+6) 2.42"
+  },
+  "qemu-system-riscv64": {
+    "path": "/usr/bin/qemu-system-riscv64",
+    "version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+  }
+}
