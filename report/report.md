@@ -7,8 +7,9 @@
 | **实验名称** | Lab 3：中断与异常处理 |
 | **小组成员** | 2412351－李华濂；2412181－肖子昂；杨昊冉（学号待补） |
 | **阶段整理日期** | 2026-10-27 |
+| **更新日期** | 2026-10-31：补齐功能模块二的中断与异常处理 |
 | **实验分支** | `lab3` |
-| **本阶段内容** | 实验二依赖迁移、启动与调试适配、功能模块一及本人部分验证 |
+| **本阶段内容** | 实验二依赖迁移、启动与调试适配、功能模块一及本人部分验证；功能模块二的中断与异常处理实现 |
 
 ### 小组分工
 
@@ -219,11 +220,55 @@ C层需要改变返回位置时应修改`tf->epc`，最终恢复过程会把它�
 
 ### 功能模块二：中断与异常处理
 
+**负责人：** 杨昊冉（与 2412181－肖子昂共同负责模块二，本轮先提交实现与说明）。
+
 #### interrupt_handler实现与说明
+
+按 `tf->cause` 去掉最高位的中断标志后分流。时钟中断先调用 `clock_set_next_event()` 装上下一次事件，再让 `ticks` 加一；`ticks` 每满 `TICK_NUM` 就调用已有的 `print_ticks()` 输出一行统计，累计输出达到 `SHUTDOWN_AFTER` 后调用 `sbi_shutdown()` 关机。软中断输出 `Supervisor software interrupt`，外部中断输出 `Supervisor external interrupt`；认不出来的中断先输出 `Unknown interrupt: cause N`，再调用 `print_trapframe(tf)` 把整帧打出来辅助定位。
+
+先装事件、后计数这个顺序是刻意的：题目明确要求不能只计数而不设置下一次时钟事件，否则系统只会收到一次时钟中断。关机条件放在满 `TICK_NUM` 的输出分支里，不放在每次中断都经过的路径上，计数和关机两件事就分开了。`SHUTDOWN_AFTER` 题目只提到名字、没有给数值，本实现取 10，理由写在下面“规格、提示词与实现过程”里。
 
 #### exception_handler实现与说明
 
+同样按 `tf->cause` 分流，只处理题目要求的两种异常：非法指令输出 `Illegal instruction at <epc>`，断点输出 `Breakpoint at <epc>`，两者都按触发指令的实际长度推进 `tf->epc`。长度由 `instruction_length()` 读取 `epc` 处半个字判断：低两位不是 11 就是 2 字节的压缩指令，否则为 4 字节的标准指令，更长的编码再按同一规则继续判断。
+
+不统一加 4 的原因是断点有压缩形式 `c.ebreak`（2 字节），非法指令同样可能是压缩指令。固定偏移会让返回位置落在指令中间，下一次取指又触发异常，形成异常循环。其余异常不实现恢复逻辑，只调用 `print_trapframe(tf)` 兜底，两个函数最后都回到统一的 Trap 返回流程。
+
 #### 规格、提示词与实现过程
+
+我先按接口、状态变化和失败条件整理规格，再让 AI 按规格实现：中断侧写清“先重装时钟事件、计数、满 TICK_NUM 输出统计、累计到 SHUTDOWN_AFTER 关机”的顺序，以及无法识别的中断只做提示加整帧输出；异常侧写清两类异常的输出格式，并明确 epc 必须按指令编码判断长度、不能假定统一偏移，其他异常走 `print_trapframe()` 兜底。`SHUTDOWN_AFTER` 包内没有定义，规格里要求实现给出明确取值并说明理由，且关机不能早于计时检查观察到 `ticks=200`，因此取 10（第 1000 次时钟中断后关机）。实现阶段限定只改 `//lab3 function2` 这一处占位，不指定必须照抄的语句，也不改动函数签名、`SAVE_ALL`、`struct trapframe` 和 `trap()`。
+
+实际使用的提示词如下：
+
+```text
+按已确认的规格，实现 kern/trap/trap.c 中 //lab3 function2 位置的
+interrupt_handler() 和 exception_handler()。
+
+必须满足：
+1. interrupt_handler 按 tf->cause 区分中断，最高位是中断标志，
+   判断前先去掉。
+2. IRQ_S_TIMER：先调用 clock_set_next_event() 设置下一次时钟事件，
+   再让 ticks 加一；ticks 达到 TICK_NUM 的整数倍时调用已有的
+   print_ticks() 输出统计信息；累计输出达到 SHUTDOWN_AFTER 后
+   调用 sbi_shutdown() 关机。不能只计数而不重装时钟事件。
+3. IRQ_S_SOFT 输出 "Supervisor software interrupt"；
+   其他能识别的中断输出对应的类型提示；无法识别的中断先输出
+   "Unknown interrupt: cause N"，再调用 print_trapframe(tf)。
+4. exception_handler 按 tf->cause 区分异常：
+   CAUSE_ILLEGAL_INSTRUCTION 输出 "Illegal instruction at ..."，
+   CAUSE_BREAKPOINT 输出 "Breakpoint at ..."；两者都要按触发指令的
+   实际长度更新 tf->epc，返回后不能重复执行同一条指令。
+5. 指令长度按 RISC-V 编码判断：低两位不是 11 即为 2 字节压缩指令，
+   否则为 4 字节标准指令。不能假定所有异常都用同一个偏移量。
+6. 题目没给出 SHUTDOWN_AFTER 的定义，实现时自行给出明确取值，
+   并说明取值理由；关机必须晚于计时检查观察到 ticks=200 的时刻。
+7. 未列出的异常不做恢复处理，只调用 print_trapframe(tf) 兜底。
+8. 不修改函数签名，不改动 trap.c 规定以外的其他函数，
+   也不改动 SAVE_ALL、struct trapframe 和 trap()。
+9. 保留 //lab3 function2 标记，代码注释一行一句、简单直接。
+
+给出每个分支的处理理由，并说明时钟中断的顺序为什么不能颠倒。
+```
 
 ## 五、测试与验证
 
@@ -316,9 +361,27 @@ tf地址 + 288字节 = 原sp
 
 #### 异常处理与压缩指令测试
 
+启用 `GRADE_LAB3_ILLEGAL` 后，内核执行一条 4 字节的非法指令 `.word 0x0000007b`，随后用合成的 trapframe 分别调用两个 handler。核对点是：`Illegal instruction at` 输出以后，返回位置按实际指令长度推进，不再重复触发同一条指令；断点异常同样输出 `Breakpoint at` 并推进 epc。指令长度由 `instruction_length()` 判断，压缩的 `c.ebreak` 按 2 字节推进，`ebreak` 和 4 字节非法指令按 4 字节推进。
+
+合成用例里的软中断、cause 15 和 cause 20 分别走到类型提示和 `print_trapframe()` 兜底，不改变返回流程，也不会在 handler 内部终止内核。
+
 #### 连续时钟与正常关机测试
 
+启用 `GRADE_LAB3_TIMER` 后持续产生时钟中断：`ticks` 每中断一次加一，每满 `TICK_NUM` 输出一次 `100 ticks`。因为每次进入时钟分支都先调用 `clock_set_next_event()`，中断会一直产生，能够观察到 `ticks=200` 之后继续计数。`SHUTDOWN_AFTER` 取 10，即第 10 次统计输出（第 1000 次时钟中断）时才调用 `sbi_shutdown()`，关机不会早于计时检查完成。
+
 #### 正式构建、启动及make grade结果
+
+验收命令按 `tools/grade.sh` 的三组用例执行，脚本分别以 `DEFS+=-DGRADE_LAB3_CONTEXT`、`DEFS+=-DGRADE_LAB3_ILLEGAL`、`DEFS+=-DGRADE_LAB3_TIMER` 重新构建并启动 QEMU，再按串口标记给分，三组分别为 35、25、40 分：
+
+```bash
+conda activate os2026
+cd /home/lhl/os2026-lab3/code
+make clean
+make
+sh tools/grade.sh
+```
+
+三组需要的串口内容分别是断点返回与 `Breakpoint at`、非法指令返回与 `Illegal instruction at` 加兜底输出、以及持续时钟的 `100 ticks` 与 `ticks=200`。
 
 ## 六、实验总结与收获
 

@@ -6,10 +6,15 @@
 #include <memlayout.h>
 #include <mmu.h>
 #include <riscv.h>
+#include <sbi.h>
 #include <stdio.h>
 #include <trap.h>
 
 #define TICK_NUM 100
+
+/* 题目只提到 SHUTDOWN_AFTER，包内没有给出定义或数值。这里取 10：
+ * 持续时钟检查需要观察到 ticks 到 200，所以关机必须晚于第 2 次输出。 */
+#define SHUTDOWN_AFTER 10
 
 static void print_ticks() {
     cprintf("%d ticks\n", TICK_NUM);
@@ -80,7 +85,68 @@ void print_regs(struct pushregs *gpr) {
     cprintf("  t6       0x%08x\n", gpr->t6);
 }
 
-//lab3 function2 YOUR CODE
+//lab3 function2 杨昊冉
+/* 按 RISC-V 指令编码判断触发异常的指令长度：低两位不是 11 就是
+ * 2 字节压缩指令，否则至少是 4 字节的标准指令。 */
+static size_t
+instruction_length(uintptr_t epc) {
+    uint16_t inst = *(uint16_t *)epc;
+    if ((inst & 0x3) != 0x3) {
+        return 2;
+    }
+    if ((inst & 0x1c) != 0x1c) {
+        return 4;
+    }
+    if ((inst & 0x20) == 0) {
+        return 6;
+    }
+    return 8;
+}
+
+void
+interrupt_handler(struct trapframe *tf) {
+    uintptr_t cause = tf->cause & ~((uintptr_t)1 << 63);
+    switch (cause) {
+    case IRQ_S_TIMER:
+        /* 先装下一次时钟事件，否则只会有一次时钟中断。 */
+        clock_set_next_event();
+        ticks++;
+        if (ticks % TICK_NUM == 0) {
+            print_ticks();
+            if (ticks / TICK_NUM >= SHUTDOWN_AFTER) {
+                sbi_shutdown();
+            }
+        }
+        break;
+    case IRQ_S_SOFT:
+        cprintf("Supervisor software interrupt\n");
+        break;
+    case IRQ_S_EXT:
+        cprintf("Supervisor external interrupt\n");
+        break;
+    default:
+        cprintf("Unknown interrupt: cause %d\n", (int)cause);
+        print_trapframe(tf);
+        break;
+    }
+}
+
+void
+exception_handler(struct trapframe *tf) {
+    switch (tf->cause) {
+    case CAUSE_ILLEGAL_INSTRUCTION:
+        cprintf("Illegal instruction at 0x%016lx\n", tf->epc);
+        tf->epc += instruction_length(tf->epc);
+        break;
+    case CAUSE_BREAKPOINT:
+        cprintf("Breakpoint at 0x%016lx\n", tf->epc);
+        tf->epc += instruction_length(tf->epc);
+        break;
+    default:
+        print_trapframe(tf);
+        break;
+    }
+}
 
 
 static inline void trap_dispatch(struct trapframe *tf) {
