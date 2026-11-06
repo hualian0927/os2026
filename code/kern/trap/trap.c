@@ -85,7 +85,7 @@ void print_regs(struct pushregs *gpr) {
     cprintf("  t6       0x%08x\n", gpr->t6);
 }
 
-//lab3 function2 杨昊冉
+//lab3 function2 2312115 杨昊冉
 /* 按 RISC-V 指令编码判断触发异常的指令长度：低两位不是 11 就是
  * 2 字节压缩指令，否则至少是 4 字节的标准指令。 */
 static size_t
