@@ -1,0 +1,116 @@
+{
+  "production_unchanged": true,
+  "screenshots": [
+    {
+      "image": "report/images/A02-mapping-created.png",
+      "title": "Software bookkeeping: actual page-table path / first insertion",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 1786,
+      "raw_prefix_sha256": "edf4e8acfb22b1de516cd283a9ede7b0a750bbad71034e68a99800ead3edfeb2",
+      "image_sha256": "6c0cc45904b17342817494f2d7a0010844db52ee4a58b1665ea3f21dd59cc401",
+      "width": 2320,
+      "height": 1349
+    },
+    {
+      "image": "report/images/A03-same-page-remap.png",
+      "title": "Software bookkeeping: same page, flags changed, reference unchanged",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 2857,
+      "raw_prefix_sha256": "13e529abd24598ab47874ae2910524501b1c910a3b380a9704bf6cdcabd7855d",
+      "image_sha256": "d6aa607279d3cd09225d630510f1bd551ff406789458b0d3dfca3deea6fe19ce",
+      "width": 2320,
+      "height": 843
+    },
+    {
+      "image": "report/images/A04-shared-page-replaced.png",
+      "title": "Software bookkeeping: shared A remains live when X is replaced by B",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 3993,
+      "raw_prefix_sha256": "209dc71eab6fd75f7bac2de9c860abba04b6c2eb3f2a4703992f8a5da0d10005",
+      "image_sha256": "337a93ef22ec532cda969ccc36ea77f863dffda16cb9ab24ea9b567c964a0c3d",
+      "width": 2320,
+      "height": 931
+    },
+    {
+      "image": "report/images/A05-unmap-and-free.png",
+      "title": "Software bookkeeping: last references removed; table pages retained",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 5797,
+      "raw_prefix_sha256": "2e416a93017a01145c77fa13452317fd8dfe7db6bda0738cc22531e04c0e88a6",
+      "image_sha256": "b304498893985366900b0a24feeb2f5df4427e57d262c71558b0812255c5af1e",
+      "width": 2320,
+      "height": 1371
+    },
+    {
+      "image": "report/images/A06-SIE-original-0.png",
+      "title": "Controlled interrupt state: original SIE=0, sie=0 throughout",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/sie/gdb.stdout.log",
+      "raw_prefix_bytes": 2358,
+      "raw_prefix_sha256": "8fc0eaaed1113f6ecb45f08016d3feee475cc7014e2fa15a71fda632ce1902ad",
+      "image_sha256": "3dd4d23c143a52b426000e3a32879c56bbcd5eff3cf1ffc797d7d69fb831cc62",
+      "width": 2320,
+      "height": 1349
+    },
+    {
+      "image": "report/images/A07-SIE-original-1.png",
+      "title": "Controlled interrupt state: original SIE=1, sie=0 throughout",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/sie/gdb.stdout.log",
+      "raw_prefix_bytes": 3751,
+      "raw_prefix_sha256": "3bd63f7bb42980da061ec951eefe0472aabf4af2de6f71f714e62ff0ca168dc1",
+      "image_sha256": "57644123fe2182ec5a9b090962ecfec938fe596ed80585cdaf24528f2b439c6b",
+      "width": 2320,
+      "height": 1217
+    },
+    {
+      "image": "report/images/A01-memory-foundation.png",
+      "title": "Current-source memory foundation / real DTB / allocator / handlers",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/sie/qemu.stdout.log",
+      "raw_prefix_bytes": 3365,
+      "raw_prefix_sha256": "e9b238e49d161cb7f2e365366759e154bae63206d920518f847604d154c88fba",
+      "image_sha256": "b3c0d9f52ba66705d36e5d833ef4bf178149e9e1c229817a8500cde96ca7bc05",
+      "width": 2320,
+      "height": 755
+    },
+    {
+      "image": "report/images/A08-software-tests.png",
+      "title": "Current-source software / OOM / index-boundary checks",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/extended.stdout.log",
+      "raw_prefix_bytes": 2318,
+      "raw_prefix_sha256": "af6f2a04a6477228e38892bb919f717f5c6fefc91a62ab7853d5ed0d3192224a",
+      "image_sha256": "c2e70d73aacb7d39aa03bf4a7fc0baed933249b20f5690c490cc3c43d95fbb1f",
+      "width": 2320,
+      "height": 799
+    },
+    {
+      "image": "report/images/A09-real-access-faults.png",
+      "title": "Real protection/deletion faults / separate independent images",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/extended.stdout.log",
+      "raw_prefix_bytes": 3406,
+      "raw_prefix_sha256": "549a3f22e97eaca894b13d57d0c1a9aaa87aea514a28123a4653877adf326a06",
+      "image_sha256": "a7e066e9f52bfff4bd43c17386cc33ac2229448854bdef55e880cd3a486340d4",
+      "width": 2320,
+      "height": 557
+    },
+    {
+      "image": "report/images/A10-known-generated-failure.png",
+      "title": "Known failure: production-generated non-leaf U bit / NOT a PASS",
+      "capture": "QWidget.grab of current live debugger frontend; actual child-process stdout",
+      "raw_output": "report/evidence/2026-11-10-demo-visible/generated.stdout.log",
+      "raw_prefix_bytes": 328,
+      "raw_prefix_sha256": "4d6820b1b036711b938b4ddd02278df8b4cea274a6f853cc1d4295d87e88e1e6",
+      "image_sha256": "410805b5c20b8ca37deff85324dda0ba33dfbd4b5c35d0f1b3096734fd0ec634",
+      "width": 2320,
+      "height": 420
+    }
+  ],
+  "scope": "Actual live debugger/QEMU/command frontend, independent images; generated path remains failed"
+}

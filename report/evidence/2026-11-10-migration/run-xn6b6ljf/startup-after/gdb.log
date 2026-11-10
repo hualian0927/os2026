@@ -1,0 +1,18 @@
+$ gdb-multiarch -q -nx -batch -ex 'file /home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-xn6b6ljf/startup-after/kernel' -ex 'set arch riscv:rv64' -ex 'target remote 127.0.0.1:37577' -ex 'hbreak *0x80200000' -ex continue -ex 'info registers pc satp' -ex 'hbreak kern_init' -ex continue -ex 'info registers pc sp satp' -ex 'x/gx ((char *)&boot_page_table_sv39)+2*8' -ex 'x/gx ((char *)&boot_page_table_sv39)+511*8' -ex detach
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
+Hardware assisted breakpoint 1 at 0x80200000
+
+Breakpoint 1, 0x0000000080200000 in ?? ()
+pc             0x80200000	0x80200000
+satp           0x0	0
+Hardware assisted breakpoint 2 at 0xffffffffc02008e6: file /home/lhl/os2026/lab4/tests/migration/startup_probe.c, line 12.
+
+Breakpoint 2, kern_init () at /home/lhl/os2026/lab4/tests/migration/startup_probe.c:12
+12	    memset(edata, 0, end - edata);
+pc             0xffffffffc02008e6	0xffffffffc02008e6 <kern_init>
+sp             0xffffffffc0203000	0xffffffffc0203000
+satp           0x8000000000080203	-9223372036854251005
+0xffffffffc0203010:	0x00000000200000cf
+0xffffffffc0203ff8:	0x00000000200000cf
+[Inferior 1 (process 1) detached]

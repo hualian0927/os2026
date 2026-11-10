@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+*.o
+/code/obj/
+/code/bin/

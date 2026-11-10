@@ -1,0 +1,128 @@
+
+/home/lhl/os2026/lab4/report/evidence/2026-11-10-demo-visible/foundation-image/kernel:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+ffffffffc0200108 <intr_enable>:
+ffffffffc0200108:	1101                	addi	sp,sp,-32
+ffffffffc020010a:	ec22                	sd	s0,24(sp)
+ffffffffc020010c:	1000                	addi	s0,sp,32
+ffffffffc020010e:	100167f3          	csrrsi	a5,sstatus,2
+ffffffffc0200112:	fef43423          	sd	a5,-24(s0)
+ffffffffc0200116:	0001                	nop
+ffffffffc0200118:	6462                	ld	s0,24(sp)
+ffffffffc020011a:	6105                	addi	sp,sp,32
+ffffffffc020011c:	8082                	ret
+
+/home/lhl/os2026/lab4/report/evidence/2026-11-10-demo-visible/foundation-image/kernel:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+ffffffffc020011e <intr_disable>:
+ffffffffc020011e:	1101                	addi	sp,sp,-32
+ffffffffc0200120:	ec22                	sd	s0,24(sp)
+ffffffffc0200122:	1000                	addi	s0,sp,32
+ffffffffc0200124:	100177f3          	csrrci	a5,sstatus,2
+ffffffffc0200128:	fef43423          	sd	a5,-24(s0)
+ffffffffc020012c:	0001                	nop
+ffffffffc020012e:	6462                	ld	s0,24(sp)
+ffffffffc0200130:	6105                	addi	sp,sp,32
+ffffffffc0200132:	8082                	ret
+
+/home/lhl/os2026/lab4/report/evidence/2026-11-10-demo-visible/foundation-image/kernel:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+ffffffffc0200e1c <__alltraps>:
+ffffffffc0200e1c:	14011073          	csrw	sscratch,sp
+ffffffffc0200e20:	712d                	addi	sp,sp,-288
+ffffffffc0200e22:	e406                	sd	ra,8(sp)
+ffffffffc0200e24:	ec0e                	sd	gp,24(sp)
+ffffffffc0200e26:	f012                	sd	tp,32(sp)
+ffffffffc0200e28:	f416                	sd	t0,40(sp)
+ffffffffc0200e2a:	f81a                	sd	t1,48(sp)
+ffffffffc0200e2c:	fc1e                	sd	t2,56(sp)
+ffffffffc0200e2e:	e0a2                	sd	s0,64(sp)
+ffffffffc0200e30:	e4a6                	sd	s1,72(sp)
+ffffffffc0200e32:	e8aa                	sd	a0,80(sp)
+ffffffffc0200e34:	ecae                	sd	a1,88(sp)
+ffffffffc0200e36:	f0b2                	sd	a2,96(sp)
+ffffffffc0200e38:	f4b6                	sd	a3,104(sp)
+ffffffffc0200e3a:	f8ba                	sd	a4,112(sp)
+ffffffffc0200e3c:	fcbe                	sd	a5,120(sp)
+ffffffffc0200e3e:	e142                	sd	a6,128(sp)
+ffffffffc0200e40:	e546                	sd	a7,136(sp)
+ffffffffc0200e42:	e94a                	sd	s2,144(sp)
+ffffffffc0200e44:	ed4e                	sd	s3,152(sp)
+ffffffffc0200e46:	f152                	sd	s4,160(sp)
+ffffffffc0200e48:	f556                	sd	s5,168(sp)
+ffffffffc0200e4a:	f95a                	sd	s6,176(sp)
+ffffffffc0200e4c:	fd5e                	sd	s7,184(sp)
+ffffffffc0200e4e:	e1e2                	sd	s8,192(sp)
+ffffffffc0200e50:	e5e6                	sd	s9,200(sp)
+ffffffffc0200e52:	e9ea                	sd	s10,208(sp)
+ffffffffc0200e54:	edee                	sd	s11,216(sp)
+ffffffffc0200e56:	f1f2                	sd	t3,224(sp)
+ffffffffc0200e58:	f5f6                	sd	t4,232(sp)
+ffffffffc0200e5a:	f9fa                	sd	t5,240(sp)
+ffffffffc0200e5c:	fdfe                	sd	t6,248(sp)
+ffffffffc0200e5e:	14002473          	csrr	s0,sscratch
+ffffffffc0200e62:	100024f3          	csrr	s1,sstatus
+ffffffffc0200e66:	14102973          	csrr	s2,sepc
+ffffffffc0200e6a:	143029f3          	csrr	s3,stval
+ffffffffc0200e6e:	14202a73          	csrr	s4,scause
+ffffffffc0200e72:	e822                	sd	s0,16(sp)
+ffffffffc0200e74:	e226                	sd	s1,256(sp)
+ffffffffc0200e76:	e64a                	sd	s2,264(sp)
+ffffffffc0200e78:	ea4e                	sd	s3,272(sp)
+ffffffffc0200e7a:	ee52                	sd	s4,280(sp)
+ffffffffc0200e7c:	14001073          	csrw	sscratch,zero
+ffffffffc0200e80:	850a                	mv	a0,sp
+ffffffffc0200e82:	7c0020ef          	jal	ffffffffc0203642 <trap>
+
+/home/lhl/os2026/lab4/report/evidence/2026-11-10-demo-visible/foundation-image/kernel:     file format elf64-littleriscv
+
+
+Disassembly of section .text:
+
+ffffffffc0200e86 <__trapret>:
+ffffffffc0200e86:	14001073          	csrw	sscratch,zero
+ffffffffc0200e8a:	6412                	ld	s0,256(sp)
+ffffffffc0200e8c:	64b2                	ld	s1,264(sp)
+ffffffffc0200e8e:	10041073          	csrw	sstatus,s0
+ffffffffc0200e92:	14149073          	csrw	sepc,s1
+ffffffffc0200e96:	60a2                	ld	ra,8(sp)
+ffffffffc0200e98:	61e2                	ld	gp,24(sp)
+ffffffffc0200e9a:	7202                	ld	tp,32(sp)
+ffffffffc0200e9c:	72a2                	ld	t0,40(sp)
+ffffffffc0200e9e:	7342                	ld	t1,48(sp)
+ffffffffc0200ea0:	73e2                	ld	t2,56(sp)
+ffffffffc0200ea2:	6406                	ld	s0,64(sp)
+ffffffffc0200ea4:	64a6                	ld	s1,72(sp)
+ffffffffc0200ea6:	6546                	ld	a0,80(sp)
+ffffffffc0200ea8:	65e6                	ld	a1,88(sp)
+ffffffffc0200eaa:	7606                	ld	a2,96(sp)
+ffffffffc0200eac:	76a6                	ld	a3,104(sp)
+ffffffffc0200eae:	7746                	ld	a4,112(sp)
+ffffffffc0200eb0:	77e6                	ld	a5,120(sp)
+ffffffffc0200eb2:	680a                	ld	a6,128(sp)
+ffffffffc0200eb4:	68aa                	ld	a7,136(sp)
+ffffffffc0200eb6:	694a                	ld	s2,144(sp)
+ffffffffc0200eb8:	69ea                	ld	s3,152(sp)
+ffffffffc0200eba:	7a0a                	ld	s4,160(sp)
+ffffffffc0200ebc:	7aaa                	ld	s5,168(sp)
+ffffffffc0200ebe:	7b4a                	ld	s6,176(sp)
+ffffffffc0200ec0:	7bea                	ld	s7,184(sp)
+ffffffffc0200ec2:	6c0e                	ld	s8,192(sp)
+ffffffffc0200ec4:	6cae                	ld	s9,200(sp)
+ffffffffc0200ec6:	6d4e                	ld	s10,208(sp)
+ffffffffc0200ec8:	6dee                	ld	s11,216(sp)
+ffffffffc0200eca:	7e0e                	ld	t3,224(sp)
+ffffffffc0200ecc:	7eae                	ld	t4,232(sp)
+ffffffffc0200ece:	7f4e                	ld	t5,240(sp)
+ffffffffc0200ed0:	7fee                	ld	t6,248(sp)
+ffffffffc0200ed2:	6142                	ld	sp,16(sp)
+ffffffffc0200ed4:	10200073          	sret

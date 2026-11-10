@@ -1,0 +1,1 @@
+本次GDB与测试运行成功，但X11 QScreen.grabWindow捕获内容全黑。原始图像保留在black-screen-captures，不作为有效实验截图。后续采用Qt对正在显示且连接实际子进程的窗口进行widget capture，并人工检查可读性。

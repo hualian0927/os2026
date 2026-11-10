@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-10",
+  "formal_build": "blocked by intentionally unimplemented Lab4 modules; exit 2",
+  "startup_before": "run-h3h2cfz_",
+  "independent_checks": "run-xoikc2sx",
+  "independent_passed_images": 11,
+  "matched_elf_gdb": "run-xn6b6ljf",
+  "formal_changed_files": [
+    "Makefile",
+    "kern/init/entry.S",
+    "kern/mm/default_pmm.c",
+    "kern/mm/pmm.c",
+    "kern/trap/trap.c",
+    "kern/trap/trapentry.S",
+    "tools/grade.sh"
+  ],
+  "preservation_checks": {
+    "kern/process/proc.c": true,
+    "kern/process/proc.h": true,
+    "kern/process/switch.S": true,
+    "kern/schedule/sched.c": true,
+    "kern/mm/pmm.h": true,
+    "kern/mm/memlayout.h": true,
+    "kern/mm/vmm.c": true,
+    "kern/mm/kmalloc.c": true,
+    "tools/test_lab4.c": true,
+    "tools/test_lab4.h": true,
+    "tools/inject.py": true,
+    "kern/sync/sync.h": true,
+    "kern/trap/trap.h": true,
+    "unchanged allocator framework tests": true,
+    "unchanged SAVE_ALL": true,
+    "unchanged forkrets": true,
+    "unchanged interrupt wrappers": true,
+    "unchanged Lab4 page-table implementation and placeholders": true,
+    "unchanged print_ticks/idt_init/SUM": true,
+    "unchanged grading except loader option": true
+  },
+  "not_full_lab4_pass": true
+}

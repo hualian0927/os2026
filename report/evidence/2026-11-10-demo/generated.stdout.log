@@ -1,0 +1,6 @@
+Evidence: /home/lhl/os2026/lab4/report/evidence/2026-11-10-demo/live-generated/checks-o_06eokd
+generated-O2: MAPPING_FAIL unexpected trap stage=production-generated path cause=d epc=ffffffffc0201548 address=4000
+generated-O2: PTE L2=20102811
+generated-O2: PTE L1=20102c11
+generated-O2: PTE L0=201020c7
+FAIL generated-O2

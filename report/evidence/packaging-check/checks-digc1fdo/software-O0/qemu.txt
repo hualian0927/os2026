@@ -1,0 +1,1 @@
+qemu-system-riscv64 -machine virt -m 128M -smp 1 -nographic -bios default -monitor none -kernel /home/lhl/os2026-lab4/report/evidence/packaging-check/checks-digc1fdo/software-O0/ucore.img

@@ -1,0 +1,76 @@
+{
+  "production_unchanged": true,
+  "screenshots": [
+    {
+      "image": "report/images/A02-mapping-created.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 400
+    },
+    {
+      "image": "report/images/A03-same-page-remap.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 305
+    },
+    {
+      "image": "report/images/A04-shared-page-replaced.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 301
+    },
+    {
+      "image": "report/images/A05-unmap-and-free.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 363
+    },
+    {
+      "image": "report/images/A06-SIE-original-0.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 426
+    },
+    {
+      "image": "report/images/A07-SIE-original-1.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 298
+    },
+    {
+      "image": "report/images/A01-memory-foundation.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 318
+    },
+    {
+      "image": "report/images/A08-software-tests.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 287
+    },
+    {
+      "image": "report/images/A09-real-access-faults.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 313
+    },
+    {
+      "image": "report/images/A10-known-generated-failure.png",
+      "raw_prefix_verified": true,
+      "nonblank_sample_colors": 135
+    }
+  ],
+  "matching_images": [
+    {
+      "name": "software-image",
+      "elf_image_match": true,
+      "elf_sha256": "1a9bdd40e850fea122b27b7cde28f50712ee52a09002bf82fe5e13714c6ce939",
+      "image_sha256": "08a0a60917629a651ecfabf9acd6c20df3fea364574920300904c55dbcfba251"
+    },
+    {
+      "name": "foundation-image",
+      "elf_image_match": true,
+      "elf_sha256": "45a176e07ef215799968b7de968d7feb0e7daf3abd7461d24bdc995d70096d82",
+      "image_sha256": "a83d932a369f1fa60c434852b44a34665c6afbbdc7e0d63f46bfa310cb81a3ed"
+    }
+  ],
+  "visual_review": [
+    "A01",
+    "A02",
+    "A07",
+    "A09"
+  ],
+  "note": "First QScreen capture yielded black images, archived separately. Valid images use QWidget.grab on the live child-process frontend; not log replay or bitmap fabrication."
+}

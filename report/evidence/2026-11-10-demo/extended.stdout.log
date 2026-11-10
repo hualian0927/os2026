@@ -1,0 +1,43 @@
+Evidence: /home/lhl/os2026/lab4/report/evidence/2026-11-10-demo/live-extended/checks-h8li5dbw
+software-O0: check_pgdir() succeeded!
+software-O0: [Test PMM] PASS
+software-O0: PASS unchanged framework software checks
+software-O0: PASS software: unaligned VA, exact requested flags, same-page remap, shared replacement, idempotent removal, page recovery
+software-O0: PASS OOM: remaining=0 existing_parent=0 mapped_input=0, old PTE/input ref preserved, new tables rolled back
+software-O0: PASS OOM: remaining=1 existing_parent=0 mapped_input=0, old PTE/input ref preserved, new tables rolled back
+software-O0: PASS OOM: remaining=0 existing_parent=1 mapped_input=0, old PTE/input ref preserved, new tables rolled back
+software-O0: PASS OOM: remaining=1 existing_parent=0 mapped_input=1, old PTE/input ref preserved, new tables rolled back
+software-O0: PASS permission matrix: replace RW/U/software flags with R, X and zero; same ref/page count
+software-O0: PASS index boundary: 2 MiB, table_pages=3, lookups/refs/page recovery
+software-O0: PASS index boundary: 1 GiB, table_pages=4, lookups/refs/page recovery
+software-O0: MAPPING_PASS mode=0: bounded independent check, not complete Lab4
+PASS software-O0
+software-O2: check_pgdir() succeeded!
+software-O2: [Test PMM] PASS
+software-O2: PASS unchanged framework software checks
+software-O2: PASS software: unaligned VA, exact requested flags, same-page remap, shared replacement, idempotent removal, page recovery
+software-O2: PASS OOM: remaining=0 existing_parent=0 mapped_input=0, old PTE/input ref preserved, new tables rolled back
+software-O2: PASS OOM: remaining=1 existing_parent=0 mapped_input=0, old PTE/input ref preserved, new tables rolled back
+software-O2: PASS OOM: remaining=0 existing_parent=1 mapped_input=0, old PTE/input ref preserved, new tables rolled back
+software-O2: PASS OOM: remaining=1 existing_parent=0 mapped_input=1, old PTE/input ref preserved, new tables rolled back
+software-O2: PASS permission matrix: replace RW/U/software flags with R, X and zero; same ref/page count
+software-O2: PASS index boundary: 2 MiB, table_pages=3, lookups/refs/page recovery
+software-O2: PASS index boundary: 1 GiB, table_pages=4, lookups/refs/page recovery
+software-O2: MAPPING_PASS mode=0: bounded independent check, not complete Lab4
+PASS software-O2
+protect-O0: OBSERVED expected fault: cause=15 address=4000 epc=ffffffffc02025f0
+protect-O0: PASS protection: real write -> R-only -> exact store page fault; data/ref/count preserved
+protect-O0: MAPPING_PASS mode=4: bounded independent check, not complete Lab4
+PASS protect-O0
+protect-O2: OBSERVED expected fault: cause=15 address=4000 epc=ffffffffc0201a28
+protect-O2: PASS protection: real write -> R-only -> exact store page fault; data/ref/count preserved
+protect-O2: MAPPING_PASS mode=4: bounded independent check, not complete Lab4
+PASS protect-O2
+unmap-O0: OBSERVED expected fault: cause=13 address=4000 epc=ffffffffc02025e0
+unmap-O0: PASS deletion: warmed read -> unmap -> same physical page reused -> exact load page fault
+unmap-O0: MAPPING_PASS mode=5: bounded independent check, not complete Lab4
+PASS unmap-O0
+unmap-O2: OBSERVED expected fault: cause=13 address=4000 epc=ffffffffc02019e8
+unmap-O2: PASS deletion: warmed read -> unmap -> same physical page reused -> exact load page fault
+unmap-O2: MAPPING_PASS mode=5: bounded independent check, not complete Lab4
+PASS unmap-O2

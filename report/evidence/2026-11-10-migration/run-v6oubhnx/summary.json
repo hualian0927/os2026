@@ -1,0 +1,303 @@
+{
+  "source": "/home/lhl/os2026/lab4/lab4_new",
+  "commands": [
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/kern/init/entry.S",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/0.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/kern/driver/console.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/1.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/kern/driver/intr.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/2.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/kern/libs/stdio.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/3.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/libs/printfmt.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/4.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/libs/string.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/5.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/lab4_new/kern/driver/dtb.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/6.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-gcc",
+        "-mcmodel=medany",
+        "-std=gnu99",
+        "-O2",
+        "-Wall",
+        "-Wno-unused",
+        "-fno-builtin",
+        "-nostdinc",
+        "-fno-stack-protector",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-g",
+        "-I/home/lhl/os2026/lab4/lab4_new/libs",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/mm",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/driver",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/debug",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/trap",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/sync",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/process",
+        "-I/home/lhl/os2026/lab4/lab4_new/kern/schedule",
+        "-c",
+        "/home/lhl/os2026/lab4/tests/migration/startup_probe.c",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/7.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-ld",
+        "-m",
+        "elf64lriscv",
+        "-nostdlib",
+        "--gc-sections",
+        "-T",
+        "/home/lhl/os2026/lab4/lab4_new/tools/kernel.ld",
+        "-o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/kernel",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/0.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/1.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/2.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/3.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/4.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/5.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/6.o",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/7.o"
+      ],
+      "cwd": null
+    },
+    {
+      "argv": [
+        "riscv64-unknown-elf-objcopy",
+        "-O",
+        "binary",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/kernel",
+        "/home/lhl/os2026/lab4/report/evidence/2026-11-10-migration/run-v6oubhnx/startup-after/ucore.img"
+      ],
+      "cwd": null
+    }
+  ],
+  "checks": {
+    "startup-after": {
+      "returncode": 0,
+      "timed_out": false,
+      "marker": "STARTUP_PROBE_PASS",
+      "marker_found": true
+    }
+  },
+  "tools": {
+    "riscv64-unknown-elf-gcc": {
+      "path": "/usr/bin/riscv64-unknown-elf-gcc",
+      "version": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0"
+    },
+    "riscv64-unknown-elf-ld": {
+      "path": "/usr/bin/riscv64-unknown-elf-ld",
+      "version": "GNU ld (2.42-1ubuntu1+6) 2.42"
+    },
+    "qemu-system-riscv64": {
+      "path": "/usr/bin/qemu-system-riscv64",
+      "version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)"
+    },
+    "gdb-multiarch": {
+      "path": "/home/lhl/anaconda3/envs/os2026/bin/gdb-multiarch",
+      "version": "GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1"
+    },
+    "make": {
+      "path": "/usr/bin/make",
+      "version": "GNU Make 4.3"
+    },
+    "python3": {
+      "path": "/home/lhl/anaconda3/envs/os2026/bin/python3",
+      "version": "Python 3.12.14"
+    }
+  }
+}

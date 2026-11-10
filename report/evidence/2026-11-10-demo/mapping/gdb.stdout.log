@@ -1,0 +1,171 @@
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
++hbreak page_insert
+Hardware assisted breakpoint 1 at 0xffffffffc0201ac0: file /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c, line 336.
++condition 1 la == 0x4100
++continue
+
+Breakpoint 1, page_insert (pgdir=0xffffffffc020a000, page=0xffffffffc021c300, la=16640, perm=6) at /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c:336
+336	    pte_t *ptep = get_pte(pgdir, la, 1);
++set $dbg_a = page
++set $dbg_root = pgdir
++set $dbg_va = la
++set $dbg_free = free_area.nr_free
++printf "BEFORE first mapping\n"
+BEFORE first mapping
++p/x $pc
+$1 = 0xffffffffc0201ac0
++p/x boot_pgdir_pa
+$2 = 0x8020a000
++p/x (($satp & 0xfffffffffff) << 12)
+$3 = 0x8020a000
++p/x $dbg_root[0]
+$4 = 0x0
++p $dbg_a->ref
+$5 = 0
++p free_area.nr_free
+$6 = 31730
++finish
+0xffffffffc0202910 in software_matrix () at /home/lhl/os2026/lab4/tests/page_mapping/check.c:90
+90	    assert(page_insert(boot_pgdir_va, a, 0x4100, PTE_R | PTE_W) == 0);
+Value returned is $7 = 0
++printf "AFTER first mapping: root -> L1 -> L0 -> data PTE\n"
+AFTER first mapping: root -> L1 -> L0 -> data PTE
++set $dbg_l2 = $dbg_root[($dbg_va >> 30) & 511]
++set $dbg_l1 = (pte_t *)((($dbg_l2 >> 10) << 12) + va_pa_offset)
++set $dbg_mid = $dbg_l1[($dbg_va >> 21) & 511]
++set $dbg_l0 = (pte_t *)((($dbg_mid >> 10) << 12) + va_pa_offset)
++set $dbg_xslot = $dbg_l0 + (($dbg_va >> 12) & 511)
++p/x $dbg_l2
+$8 = 0x20103811
++p/x $dbg_mid
+$9 = 0x20103c11
++p/x *$dbg_xslot
+$10 = 0x20103007
++p $dbg_a->ref
+$11 = 1
++p free_area.nr_free
+$12 = 31728
++python assert int(gdb.parse_and_eval("$dbg_a->ref")) == 1
++python assert int(gdb.parse_and_eval("free_area.nr_free")) == int(gdb.parse_and_eval("$dbg_free")) - 2
++python capture_checkpoint("A02-mapping-created")
+CAPTURE_CHECKPOINT A02-mapping-created
++condition 1 la == 0x4000 && page == $dbg_a && perm == 0
++continue
+
+Breakpoint 1, page_insert (pgdir=0xffffffffc020a000, page=0xffffffffc021c300, la=16384, perm=0) at /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c:336
+336	    pte_t *ptep = get_pte(pgdir, la, 1);
++printf "BEFORE same-page remap\n"
+BEFORE same-page remap
++p/x *$dbg_xslot
+$13 = 0x20103007
++p $dbg_a->ref
+$14 = 1
++p free_area.nr_free
+$15 = 31728
++finish
+0xffffffffc02029cc in software_matrix () at /home/lhl/os2026/lab4/tests/page_mapping/check.c:93
+93	    assert(page_insert(boot_pgdir_va, a, 0x4000, 0) == 0);
+Value returned is $16 = 0
++printf "AFTER same-page remap: flags replaced, no extra reference\n"
+AFTER same-page remap: flags replaced, no extra reference
++p/x *$dbg_xslot
+$17 = 0x20103001
++p $dbg_a->ref
+$18 = 1
++p free_area.nr_free
+$19 = 31728
++python assert int(gdb.parse_and_eval("$dbg_a->ref")) == 1
++python assert int(gdb.parse_and_eval("free_area.nr_free")) == int(gdb.parse_and_eval("$dbg_free")) - 2
++python capture_checkpoint("A03-same-page-remap")
+CAPTURE_CHECKPOINT A03-same-page-remap
++condition 1 la == 0x4000 && page != $dbg_a && perm == 2
++continue
+
+Breakpoint 1, page_insert (pgdir=0xffffffffc020a000, page=0xffffffffc021c340, la=16384, perm=2) at /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c:336
+336	    pte_t *ptep = get_pte(pgdir, la, 1);
++set $dbg_b = page
++printf "BEFORE replacing X: A also mapped at Y\n"
+BEFORE replacing X: A also mapped at Y
++p $dbg_a->ref
+$20 = 2
++p $dbg_b->ref
+$21 = 0
++p free_area.nr_free
+$22 = 31728
++python assert int(gdb.parse_and_eval("$dbg_a->ref")) == 2
++finish
+0xffffffffc0202ad0 in software_matrix () at /home/lhl/os2026/lab4/tests/page_mapping/check.c:98
+98	    assert(page_insert(boot_pgdir_va, b, 0x4000, PTE_R) == 0);
+Value returned is $23 = 0
++printf "AFTER replacing X: A remains referenced by Y\n"
+AFTER replacing X: A remains referenced by Y
++p/x *$dbg_xslot
+$24 = 0x20103403
++p $dbg_a->ref
+$25 = 1
++p $dbg_b->ref
+$26 = 1
++p free_area.nr_free
+$27 = 31728
++python assert int(gdb.parse_and_eval("$dbg_a->ref")) == 1
++python assert int(gdb.parse_and_eval("$dbg_b->ref")) == 1
++python capture_checkpoint("A04-shared-page-replaced")
+CAPTURE_CHECKPOINT A04-shared-page-replaced
++disable 1
++hbreak page_remove
+Hardware assisted breakpoint 2 at 0xffffffffc0201a74: file /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c, line 327.
++condition 2 la == 0x5100
++continue
+
+Breakpoint 2, page_remove (pgdir=0xffffffffc020a000, la=20736) at /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c:327
+327	    pte_t *ptep = get_pte(pgdir, la, 0);
++set $dbg_yslot = $dbg_l0 + 5
++printf "BEFORE removing Y (last reference to A)\n"
+BEFORE removing Y (last reference to A)
++p/x *$dbg_yslot
+$28 = 0x20103015
++p $dbg_a->ref
+$29 = 1
++p free_area.nr_free
+$30 = 31728
++finish
+software_matrix () at /home/lhl/os2026/lab4/tests/page_mapping/check.c:103
+103	    assert(page_ref(a) == 0 && nr_free_pages() == initial - 3);
++printf "AFTER removing Y\n"
+AFTER removing Y
++p/x *$dbg_yslot
+$31 = 0x0
++p $dbg_a->ref
+$32 = 0
++p free_area.nr_free
+$33 = 31729
++python assert int(gdb.parse_and_eval("$dbg_a->ref")) == 0
++condition 2 la == 0x4000
++continue
+
+Breakpoint 2, page_remove (pgdir=0xffffffffc020a000, la=16384) at /home/lhl/os2026/lab4/lab4_new/kern/mm/pmm.c:327
+327	    pte_t *ptep = get_pte(pgdir, la, 0);
++printf "BEFORE removing X (last reference to B)\n"
+BEFORE removing X (last reference to B)
++p $dbg_b->ref
+$34 = 1
++finish
+software_matrix () at /home/lhl/os2026/lab4/tests/page_mapping/check.c:107
+107	    assert(page_ref(b) == 0 && nr_free_pages() == initial - 2);
++printf "AFTER removing X: data freed, two table pages remain\n"
+AFTER removing X: data freed, two table pages remain
++p/x *$dbg_xslot
+$35 = 0x0
++p $dbg_b->ref
+$36 = 0
++p free_area.nr_free
+$37 = 31730
++python assert int(gdb.parse_and_eval("$dbg_b->ref")) == 0
++python assert int(gdb.parse_and_eval("free_area.nr_free")) == int(gdb.parse_and_eval("$dbg_free"))
++python capture_checkpoint("A05-unmap-and-free")
+CAPTURE_CHECKPOINT A05-unmap-and-free
++delete breakpoints
++detach
+[Inferior 1 (process 1) detached]
++quit

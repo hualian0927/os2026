@@ -1,0 +1,9 @@
+{
+  "command": [
+    "make",
+    "-j2"
+  ],
+  "cwd": "/home/lhl/os2026/lab4/lab4_new",
+  "returncode": 2,
+  "expected_missing_modules": true
+}

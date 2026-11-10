@@ -1,0 +1,116 @@
+{
+  "production_unchanged": true,
+  "screenshots": [
+    {
+      "image": "report/images/A02-mapping-created.png",
+      "title": "Software bookkeeping: actual page-table path / first insertion",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 1786,
+      "raw_prefix_sha256": "edf4e8acfb22b1de516cd283a9ede7b0a750bbad71034e68a99800ead3edfeb2",
+      "image_sha256": "0d8b9e07421cf558ddc2d76eb738543fbe2129a24ef0b1c8a161f05204f62bc2",
+      "width": 2320,
+      "height": 1349
+    },
+    {
+      "image": "report/images/A03-same-page-remap.png",
+      "title": "Software bookkeeping: same page, flags changed, reference unchanged",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 2857,
+      "raw_prefix_sha256": "13e529abd24598ab47874ae2910524501b1c910a3b380a9704bf6cdcabd7855d",
+      "image_sha256": "bee8b4ccc8a111ccbf1424d7ddcf38f4244897c3c1fa62cfec115a8d691673f0",
+      "width": 2320,
+      "height": 843
+    },
+    {
+      "image": "report/images/A04-shared-page-replaced.png",
+      "title": "Software bookkeeping: shared A remains live when X is replaced by B",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 3993,
+      "raw_prefix_sha256": "209dc71eab6fd75f7bac2de9c860abba04b6c2eb3f2a4703992f8a5da0d10005",
+      "image_sha256": "a9da4683d7389e28252bf08aa294dac78865d83c24a94828fe4544bcbdb0d152",
+      "width": 2320,
+      "height": 931
+    },
+    {
+      "image": "report/images/A05-unmap-and-free.png",
+      "title": "Software bookkeeping: last references removed; table pages retained",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/mapping/gdb.stdout.log",
+      "raw_prefix_bytes": 5797,
+      "raw_prefix_sha256": "2e416a93017a01145c77fa13452317fd8dfe7db6bda0738cc22531e04c0e88a6",
+      "image_sha256": "8f5a88d6b04fc1ebd322c20df744cbf17a9020cafadff036ccbf8df502e97e6e",
+      "width": 2320,
+      "height": 1371
+    },
+    {
+      "image": "report/images/A06-SIE-original-0.png",
+      "title": "Controlled interrupt state: original SIE=0, sie=0 throughout",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/sie/gdb.stdout.log",
+      "raw_prefix_bytes": 2358,
+      "raw_prefix_sha256": "8fc0eaaed1113f6ecb45f08016d3feee475cc7014e2fa15a71fda632ce1902ad",
+      "image_sha256": "0d8b9e07421cf558ddc2d76eb738543fbe2129a24ef0b1c8a161f05204f62bc2",
+      "width": 2320,
+      "height": 1349
+    },
+    {
+      "image": "report/images/A07-SIE-original-1.png",
+      "title": "Controlled interrupt state: original SIE=1, sie=0 throughout",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/sie/gdb.stdout.log",
+      "raw_prefix_bytes": 3751,
+      "raw_prefix_sha256": "3bd63f7bb42980da061ec951eefe0472aabf4af2de6f71f714e62ff0ca168dc1",
+      "image_sha256": "9649c3da4e1511d298d60277fb480aed185334e53c03460bb858051a77595c68",
+      "width": 2320,
+      "height": 1217
+    },
+    {
+      "image": "report/images/A01-memory-foundation.png",
+      "title": "Current-source memory foundation / real DTB / allocator / handlers",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/sie/qemu.stdout.log",
+      "raw_prefix_bytes": 3365,
+      "raw_prefix_sha256": "e9b238e49d161cb7f2e365366759e154bae63206d920518f847604d154c88fba",
+      "image_sha256": "9b9ba0f95c1dbbcc4e386f041c8058cca0b890b3572f3dcece4a41e3bd44af82",
+      "width": 2320,
+      "height": 755
+    },
+    {
+      "image": "report/images/A08-software-tests.png",
+      "title": "Current-source software / OOM / index-boundary checks",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/extended.stdout.log",
+      "raw_prefix_bytes": 2310,
+      "raw_prefix_sha256": "649adf44322d8793e79043d922f104d36d47b83916f336cfc740b99ce35da0d1",
+      "image_sha256": "0597f5be8364d44b7773c9345604feef4f089d4d54e1533aac68f0ed011c40db",
+      "width": 2320,
+      "height": 799
+    },
+    {
+      "image": "report/images/A09-real-access-faults.png",
+      "title": "Real protection/deletion faults / separate independent images",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/extended.stdout.log",
+      "raw_prefix_bytes": 3398,
+      "raw_prefix_sha256": "44c0527a5a9848ab3d5015bcc7166a89c90cd6d899613984839d88c2b57dc85d",
+      "image_sha256": "feefc81d79b518c51bdab4adfa5c0032f206ef02d8d7528390307f8ff02ccbc1",
+      "width": 2320,
+      "height": 557
+    },
+    {
+      "image": "report/images/A10-known-generated-failure.png",
+      "title": "Known failure: production-generated non-leaf U bit / NOT a PASS",
+      "capture": "QScreen.grabWindow of visible frontend connected to live child process",
+      "raw_output": "report/evidence/2026-11-10-demo/generated.stdout.log",
+      "raw_prefix_bytes": 320,
+      "raw_prefix_sha256": "5d23f154c011e0fc593fc6def76dce20047c5d8e17b016f4ee00e2f6a1f2d038",
+      "image_sha256": "1380cb81ceb2f9d7721cd78f288765acd1da95e77687e2c45635eefb92d377d4",
+      "width": 2320,
+      "height": 420
+    }
+  ],
+  "scope": "Actual live debugger/QEMU/command frontend, independent images; generated path remains failed"
+}

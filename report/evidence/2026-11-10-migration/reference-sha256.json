@@ -1,0 +1,8 @@
+{
+  "lab2/code/kern/mm/pmm.c": "c6895f63835ff9eab84aa830fe373e4627ea1547757cbdf03ebdbf7a9c7e510c",
+  "lab2/code/kern/mm/best_fit_pmm.c": "f9d86f3964f82eca10ea780b3a4bac80e1793a270812d6306f5ccfad9c97718c",
+  "lab3/lab3_new/kern/mm/pmm.c": "9141f4ab45ff2d41f8b81fa5a562ae0ac72dce1dd3911fc858e919decc9a81f5",
+  "lab3/lab3_new/kern/mm/best_fit_pmm.c": "6583073dd7a2b808c7b27fd8d1a1265e3a8314c5be1d73887de3ab2b0ea2b310",
+  "lab3/lab3_new/kern/trap/trapentry.S": "9996f430f6761aca551d54dec216f35ae51b5524a59fa929ef6f2c8cc9ab9190",
+  "lab3/lab3_new/kern/trap/trap.c": "c403a81ff9871382425e6c200ac68840aa732ac325557579eb972e43991fa7c6"
+}

@@ -1,0 +1,8 @@
+{
+  "command": [
+    "make",
+    "-j2"
+  ],
+  "returncode": 2,
+  "cwd": "/home/lhl/os2026/lab4/lab4_new"
+}

@@ -1,0 +1,113 @@
+The target architecture is set to "riscv:rv64".
+0x0000000000001000 in ?? ()
++hbreak kern_init
+Hardware assisted breakpoint 1 at 0xffffffffc020188a: file /home/lhl/os2026/lab4/tests/migration/foundation.c, line 86.
++continue
+
+Breakpoint 1, kern_init () at /home/lhl/os2026/lab4/tests/migration/foundation.c:86
+86	    memset(edata, 0, end - edata);
++delete 1
++python capture_checkpoint("CLEAR_QEMU")
+CAPTURE_CHECKPOINT CLEAR_QEMU
++hbreak /home/lhl/os2026/lab4/tests/migration/foundation.c:62
+Hardware assisted breakpoint 2 at 0xffffffffc02015ec: file /home/lhl/os2026/lab4/tests/migration/foundation.c, line 62.
++hbreak /home/lhl/os2026/lab4/tests/migration/foundation.c:63
+Hardware assisted breakpoint 3 at 0xffffffffc02015f6: file /home/lhl/os2026/lab4/tests/migration/foundation.c, line 63.
++hbreak /home/lhl/os2026/lab4/tests/migration/foundation.c:69
+Hardware assisted breakpoint 4 at 0xffffffffc02016aa: file /home/lhl/os2026/lab4/tests/migration/foundation.c, line 69.
++condition 2 enabled == 0
++condition 3 enabled == 0
++condition 4 enabled == 0
++continue
+
+Breakpoint 2, check_interrupt_wrappers () at /home/lhl/os2026/lab4/tests/migration/foundation.c:62
+62	        local_intr_save(outer);
++printf "BEFORE local_intr_save\n"
+BEFORE local_intr_save
++p enabled
+$1 = 0
++p/x ($sstatus & 2)
+$2 = 0x0
++p/x $sie
+$3 = 0x0
++p/x $stvec
+$4 = 0xffffffffc0200e1c
++python assert int(gdb.parse_and_eval("$sie")) == 0
++python assert int(gdb.parse_and_eval("$sstatus & 2")) == 0
++continue
+
+Breakpoint 3, check_interrupt_wrappers () at /home/lhl/os2026/lab4/tests/migration/foundation.c:63
+63	        assert(outer == enabled && !(read_csr(sstatus) & SSTATUS_SIE));
++printf "AFTER save: flag preserves original state\n"
+AFTER save: flag preserves original state
++p outer
+$5 = 0
++p/x ($sstatus & 2)
+$6 = 0x0
++python assert int(gdb.parse_and_eval("outer")) == 0
++python assert int(gdb.parse_and_eval("$sstatus & 2")) == 0
++continue
+
+Breakpoint 4, check_interrupt_wrappers () at /home/lhl/os2026/lab4/tests/migration/foundation.c:69
+69	        assert(!!(read_csr(sstatus) & SSTATUS_SIE) == enabled);
++printf "AFTER local_intr_restore\n"
+AFTER local_intr_restore
++p outer
+$7 = 0
++p/x ($sstatus & 2)
+$8 = 0x0
++p/x $sie
+$9 = 0x0
++python assert int(gdb.parse_and_eval("$sstatus & 2")) == 0
++python capture_checkpoint("A06-SIE-original-0")
+CAPTURE_CHECKPOINT A06-SIE-original-0
++condition 2 enabled == 1
++condition 3 enabled == 1
++condition 4 enabled == 1
++continue
+
+Breakpoint 2, check_interrupt_wrappers () at /home/lhl/os2026/lab4/tests/migration/foundation.c:62
+62	        local_intr_save(outer);
++printf "BEFORE local_intr_save\n"
+BEFORE local_intr_save
++p enabled
+$10 = 1
++p/x ($sstatus & 2)
+$11 = 0x2
++p/x $sie
+$12 = 0x0
++p/x $stvec
+$13 = 0xffffffffc0200e1c
++python assert int(gdb.parse_and_eval("$sie")) == 0
++python assert int(gdb.parse_and_eval("$sstatus & 2")) == 2
++continue
+
+Breakpoint 3, check_interrupt_wrappers () at /home/lhl/os2026/lab4/tests/migration/foundation.c:63
+63	        assert(outer == enabled && !(read_csr(sstatus) & SSTATUS_SIE));
++printf "AFTER save: flag preserves original state\n"
+AFTER save: flag preserves original state
++p outer
+$14 = 1
++p/x ($sstatus & 2)
+$15 = 0x0
++python assert int(gdb.parse_and_eval("outer")) == 1
++python assert int(gdb.parse_and_eval("$sstatus & 2")) == 0
++continue
+
+Breakpoint 4, check_interrupt_wrappers () at /home/lhl/os2026/lab4/tests/migration/foundation.c:69
+69	        assert(!!(read_csr(sstatus) & SSTATUS_SIE) == enabled);
++printf "AFTER local_intr_restore\n"
+AFTER local_intr_restore
++p outer
+$16 = 1
++p/x ($sstatus & 2)
+$17 = 0x2
++p/x $sie
+$18 = 0x0
++python assert int(gdb.parse_and_eval("$sstatus & 2")) == 2
++python capture_checkpoint("A07-SIE-original-1")
+CAPTURE_CHECKPOINT A07-SIE-original-1
++delete breakpoints
++detach
+[Inferior 1 (process 1) detached]
++quit
