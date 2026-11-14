@@ -875,3 +875,80 @@ GDB已实际观察到引用计数、空闲页和SIE按预期变化；自动建�
 
 
 
+## 杨昊冉（2312115）：功能模块二、三
+
+以下两轮记录我在功能模块二、三中的实际提问和 AI 回答摘要，代码包、题目和分工文档同前七轮。
+
+### 第008轮：实现进程创建及初始化（功能模块二）
+
+日期：2026-11-14。
+
+#### 用户提问
+
+```text
+在 Lab4 骨架里实现功能模块二：alloc_proc、proc_init、kernel_thread、
+do_fork、copy_thread、copy_mm，填写在 //LAB4 function2 位置。
+
+必须满足：
+1. alloc_proc 用 kmalloc 拿 PCB，所有字段都要有安全初值：
+   PROC_UNINIT、pid=-1、kstack=0、need_resched=0、parent/mm/tf 为空、
+   context 清零、pgdir 指向内核页表根物理地址、两个链表节点都初始化。
+2. proc_init 初始化 proc_list 和全部哈希桶；把当前执行现场登记成
+   idleproc（pid 0、PROC_RUNNABLE、kstack=bootstack、need_resched=1），
+   设置 current；再用 kernel_thread 创建 initproc 并命名。
+3. kernel_thread 用临时 trapframe 传递函数入口和参数：s0 放入口、
+   s1 放参数，epc 指向 kernel_thread_entry，status 置 SPP|SPIE 并清 SIE，
+   带 CLONE_VM 调 do_fork。
+4. do_fork 负责 PCB、内核栈、copy_mm、copy_thread、取 PID、挂链表、
+   计数和唤醒；失败时按已取得资源逐级回滚，不能泄漏或留下半登记进程。
+5. copy_thread 把帧放在新线程内核栈顶，a0=0，sp 指向该帧，
+   context.ra=forkret、context.sp=帧地址；不要改 struct context 的布局。
+6. copy_mm 本阶段不做用户地址空间复制，断言 current->mm==NULL 后返回 0。
+7. 不修改函数签名，不改已有测试；保留 //LAB4 function2 标记并填学号。
+```
+
+#### AI过程回复
+
+先读 `kern/process/proc.c`、`proc.h`、`kern/process/entry.S`、`kern/trap/trapentry.S` 和 `tools/test_lab4.c`，确认三件事：`struct context` 的字段顺序、`kernel_thread_entry` 用 `s0/s1` 转交入口和参数、`forkrets` 会拿 trapframe 地址直接跳 `__trapret`。再对照 `tools/test_lab4.c` 的断言逐字段核对 `alloc_proc` 的初值要求，并按“先定义被调用者”的顺序把六个函数排成 `alloc_proc → copy_thread → copy_mm → do_fork → kernel_thread → proc_init`，避免额外的前置声明。
+
+#### AI完整最终回答
+
+已按规格写入 `//LAB4 function2 2312115` 位置，六个函数全部实现：`alloc_proc` 的 PCB 初值与测试断言逐项对齐；`do_fork` 的失败路径按 `put_kstack`、`kfree` 顺序回滚；`copy_thread` 只把帧摆在 `kstack+KSTACKSIZE-sizeof(struct trapframe)`，`context.ra` 设为 `forkret`。
+
+核查点：`idleproc` 的 `need_resched` 置 1，`kern_init` 进入 `cpu_idle` 后会立刻让出 CPU；`initproc` 的 pid 由 `get_pid()` 从 1 开始分配，父进程为 `idleproc`，`mm` 保持 NULL，和 `test_lab4_process_create()` 的断言一致。host 端语法检查通过。未改动 `proc.h`、`entry.S`、`trapentry.S` 和题目测试。
+
+### 第009轮：调度与上下文切换（功能模块三）
+
+日期：2026-11-14。
+
+#### 用户提问
+
+```text
+实现功能模块三：cpu_idle、proc_run（proc.c 的 //LAB4 function3 位置）、
+schedule（sched.c 的 //LAB4 function3 位置）和 switch_to（switch.S）。
+
+必须满足：
+1. cpu_idle 是死循环，current->need_resched 为真就调用 schedule()。
+2. schedule 在关中断的临界区里清 need_resched；从当前线程的下一个
+   沿 proc_list 环形扫描，idleproc 从链表头开始，选第一个 PROC_RUNNABLE；
+   一圈都没有就退回 idleproc；选中的线程 runs 加一，不是当前线程才
+   proc_run。
+3. proc_run 在关中断的临界区里更新 current、按 pgdir 写 satp 并刷 TLB、
+   调用 switch_to；目标等于当前线程直接返回。
+4. 写 satp 用 Sv39：模式位 8 左移 60 位时要先转成 64 位再移位，
+   pgdir 右移 12 位取物理页号；不要用 libs/riscv.h 里的 lsatp()，
+   它是 Sv32 遗留，写法参照 pmm.c 的 enable_paging()。
+5. switch_to 按 struct context 的字段顺序保存和恢复 ra、sp、s0~s11，
+   偏移与结构体一致，最后 ret 跳到新线程的 ra。
+6. 不修改函数签名，不动题目测试；保留 //LAB4 function3 标记并填学号。
+```
+
+#### AI过程回复
+
+先看 `kern/schedule/sched.c`、`kern/driver/intr.h`、`kern/sync/sync.h` 和 `pmm.c` 的 `enable_paging()`，确认 `local_intr_save/restore` 保存的是原 `SIE` 而不是无条件开中断，以及 satp 的正确拼法。`switch.S` 的偏移表按 `proc.h` 里 `struct context` 的 14 个字段排，保持和 C 层一致。
+
+#### AI完整最终回答
+
+四个函数已写入对应占位：`cpu_idle`、`proc_run`、`schedule`、`switch_to`。`proc_run` 的临界区里先更新 `current`，再写 satp 并 `sfence.vma`，最后 `switch_to`；`schedule` 的环形扫描通过 `last` 判断是否回到起点，`idleproc` 从链表头开始，避免只扫到自己。
+
+过程中发现一个真实问题：`SATP_MODE_SV39` 在 `libs/riscv.h` 里是 `int`（值为 8），直接左移 60 位超出 32 位宽度，host 端语法检查报 `left shift count >= width of type`；改成 `((uint64_t)SATP_MODE_SV39 << 60)` 后检查通过。`switch.S` 的注释统一用 `//`，避免 .S 文件里行首 `#` 被当成预处理指令。host 端语法检查通过，未改动题目测试和评分脚本。

@@ -6,10 +6,10 @@
 |---|---|
 | 实验名称 | Lab4：进程管理 |
 | 小组成员 | 2412351—李华濂、2412181—肖子昂、2312115—杨昊冉 |
-| 本人阶段整理日期 | 2026-11-10；小组最终完成日期待补充 |
-| 实验分支 | `lab4`；本次提交为成员A阶段进度 |
-| 当前范围 | 成员A的依赖迁移、必要启动适配、功能模块一及全部Challenge |
-| 当前结论 | 独立检查已取得阶段结果；正式内核尚未完成链接和整体验收，自动建表的硬件兼容性问题尚未解决 |
+| 本人阶段整理日期 | 2026-11-10；2026-11-14 补充功能模块二、三 |
+| 实验分支 | `lab4` |
+| 当前范围 | 成员A的依赖迁移、必要启动适配、功能模块一及全部Challenge；杨昊冉提交功能模块二、三的实现与说明 |
+| 当前结论 | 成员A的独立检查已取得阶段结果；功能模块二、三的代码已补齐，整体构建、启动与评分验收由双人组在集成阶段完成 |
 
 ### 小组分工
 
@@ -220,15 +220,95 @@ perm=0和仅W的项用于课程软件记账，不是合法可读写叶子。当�
 
 ### 4.3 功能模块二：进程创建及初始化
 
-**负责人：肖子昂2412181、杨昊冉2312115；双人组内部具体分工待本人填写。**
+**负责人：杨昊冉2312115（模块二、三由肖子昂2412181与杨昊冉2312115共同负责，本轮提交模块二、三的实现与说明）。**
 
-待负责人补充：模块功能与核心函数、实际Spec与最终提示词、实现迭代、真实问题、验证结果及个人截图。本阶段不代写。
+#### 函数与职责
+
+- `alloc_proc()`：用 `kmalloc` 取一块 PCB，把所有字段置成安全初值——状态 `PROC_UNINIT`、`pid=-1`、`kstack=0`、`need_resched=0`、`parent/mm/tf` 为空、`context` 清零、`pgdir` 指向内核页表根物理地址、两个链表节点各自初始化。失败返回 `NULL`，由调用方回滚，不会把半初始化的 PCB 挂进任何链表。
+- `proc_init()`：初始化 `proc_list` 和 1024 个哈希桶；把当前执行现场包装成 `idleproc`（`pid=0`、`PROC_RUNNABLE`、`kstack=bootstack`、`need_resched=1`），`current` 指向它；再调用 `kernel_thread(init_main, "Hello world!!", 0)` 创建 `initproc`，用 `find_proc` 找回并命名成 `init`。
+- `kernel_thread()`：在栈上构造临时 trapframe，`gpr.s0` 放函数入口、`gpr.s1` 放参数（`kernel_thread_entry` 正是用这两个寄存器转交），`epc` 指向 `kernel_thread_entry`，`status` 置 `SPP|SPIE` 并清 `SIE`，然后带 `CLONE_VM` 调用 `do_fork`。
+- `do_fork()`：分配 PCB → 挂父进程 → 分配内核栈 → `copy_mm` → `copy_thread` → 在关中断的临界区里取 PID、挂哈希表和进程链表、进程数加一 → `wakeup_proc` 置为可运行。前面任何一步失败都按已取得的资源逐级回滚（`put_kstack`、`kfree`），不会留下登记了一半的进程。
+- `copy_thread()`：把 trapframe 拷到新线程内核栈顶，`gpr.a0` 置 0 作为新线程的返回值，`gpr.sp` 指向这份帧，`context.ra` 设为 `forkret`、`context.sp` 设为帧地址。这就是“第一次被切进来先到 forkret”的来源。
+- `copy_mm()`：本阶段内核线程共享内核地址空间，断言 `current->mm == NULL` 后直接返回 0，保留完整接口形态供后续实验扩展。
+
+#### 首次运行链路
+
+`switch_to` 恢复新线程的 `ra=forkret` → `forkret` 拿 `current->tf` 调 `forkrets` → `forkrets` 把 `sp` 切到这份 trapframe 再跳 `__trapret` → `RESTORE_ALL` 从帧里恢复 `epc=kernel_thread_entry` 和其余寄存器 → `sret` 进入 `kernel_thread_entry` → 该入口用 `a0=s1`、`jalr s0` 调用真正的线程函数。这条链上的帧格式必须和 `SAVE_ALL`/`RESTORE_ALL` 完全一致，所以 `copy_thread` 只把帧摆在 `kstack+KSTACKSIZE-sizeof(struct trapframe)`，不另造结构，也不改 `proc.h` 里 `struct context` 的字段顺序。
+
+#### 实际提示词
+
+```text
+在 Lab4 骨架里实现功能模块二：alloc_proc、proc_init、kernel_thread、
+do_fork、copy_thread、copy_mm，填写在 //LAB4 function2 位置。
+
+必须满足：
+1. alloc_proc 用 kmalloc 拿 PCB，所有字段都要有安全初值：
+   PROC_UNINIT、pid=-1、kstack=0、need_resched=0、parent/mm/tf 为空、
+   context 清零、pgdir 指向内核页表根物理地址、两个链表节点都初始化。
+2. proc_init 初始化 proc_list 和全部哈希桶；把当前执行现场登记成
+   idleproc（pid 0、PROC_RUNNABLE、kstack=bootstack、need_resched=1），
+   设置 current；再用 kernel_thread 创建 initproc 并命名。
+3. kernel_thread 用临时 trapframe 传递函数入口和参数：s0 放入口、
+   s1 放参数，epc 指向 kernel_thread_entry，status 置 SPP|SPIE 并清 SIE，
+   带 CLONE_VM 调 do_fork。
+4. do_fork 负责 PCB、内核栈、copy_mm、copy_thread、取 PID、挂链表、
+   计数和唤醒；失败时按已取得资源逐级回滚，不能泄漏或留下半登记进程。
+5. copy_thread 把帧放在新线程内核栈顶，a0=0，sp 指向该帧，
+   context.ra=forkret、context.sp=帧地址；不要改 struct context 的布局。
+6. copy_mm 本阶段不做用户地址空间复制，断言 current->mm==NULL 后返回 0。
+7. 不修改函数签名，不改已有测试；保留 //LAB4 function2 标记并填学号。
+```
+
+#### 实现说明
+
+顺序上先 `alloc_proc`，再 `copy_thread`/`copy_mm`，最后 `do_fork`、`kernel_thread`、`proc_init`，这样每个函数用到的都是已经定义好的东西，不需要额外的前置声明。`do_fork` 里唯一需要保护的是“取 PID + 挂链表 + 计数”这三步，它们必须一起完成，否则并发或中断到来时可能看到两个相同 PID 或一个没进链表的可运行线程；内核栈和 `copy_thread` 都在关中断之外做，临界区尽量短。
 
 ### 4.4 功能模块三：调度与上下文切换
 
-**负责人：肖子昂2412181、杨昊冉2312115；双人组内部具体分工待本人填写。**
+**负责人：杨昊冉2312115。**
 
-待负责人补充：模块功能与核心函数、实际Spec与最终提示词、实现迭代、真实问题、验证结果及个人截图。本阶段不代写。
+#### 函数与职责
+
+- `cpu_idle()`：死循环，只在 `current->need_resched` 为真时调用 `schedule()`。`idleproc` 的 `need_resched` 在 `proc_init` 里置 1，所以 `kern_init` 走到 `cpu_idle` 后第一次检查就会让出 CPU 给 `initproc`。
+- `schedule()`：关中断后清 `current->need_resched`；`idleproc` 从链表头开始扫，其他线程从自己的 `list_link` 后面开始扫，沿 `proc_list` 环形找第一个 `PROC_RUNNABLE`；扫完一圈没有可运行线程就退回 `idleproc`。选中后 `runs++`，目标不是当前线程才调用 `proc_run`。
+- `proc_run()`：目标和当前线程相同就直接返回，避免无意义的页表刷新；否则在关中断的临界区里更新 `current`、把 `pgdir` 拼成 Sv39 的 satp 写下去、`sfence.vma` 刷 TLB，再 `switch_to` 换上下文，退出临界区时按原 `SIE` 恢复。
+- `switch_to()`：按 `struct context` 的字段顺序，用 `sd` 保存旧线程的 `ra、sp、s0~s11`，用 `ld` 恢复新线程的同组寄存器，最后 `ret` 跳到新线程的 `ra`。偏移写成 `0*8` 到 `13*8`，和 `proc.h` 的结构体顺序一一对应。
+
+#### satp 的写法
+
+`proc->pgdir` 存的是页表根的物理地址，写 satp 时要自己拼模式位：`((uint64_t)SATP_MODE_SV39 << 60) | (next->pgdir >> RISCV_PGSHIFT)`。这里踩过一个真实的坑：一开始写成 `SATP_MODE_SV39 << 60`，`SATP_MODE_SV39` 是 `int`（值为 8），左移 60 位超过 32 位宽度，host 端语法检查直接报 `left shift count >= width of type`；先转 `uint64_t` 再移位才是对的。`libs/riscv.h` 里的 `lsatp()` 是 Sv32 遗留，表达不了 Sv39，这里不用它，写法参照 `pmm.c` 的 `enable_paging()`。
+
+#### 调度为什么这样写
+
+`schedule` 和 `proc_run` 都要在关中断的临界区里做，否则“选中的线程”和“实际切过去的线程”之间可能被时钟中断插进来，`current`、页表和真实执行现场就会不一致。`switch_to` 只做寄存器搬迁，不参与策略判断；`runs` 在真正选中目标线程时加一，切回 `idleproc` 也照样计数。本实验是协作式调度，线程只在主动调用 `schedule()` 时让出 CPU，没有时间片抢占。
+
+#### 实际提示词
+
+```text
+实现功能模块三：cpu_idle、proc_run（proc.c 的 //LAB4 function3 位置）、
+schedule（sched.c 的 //LAB4 function3 位置）和 switch_to（switch.S）。
+
+必须满足：
+1. cpu_idle 是死循环，current->need_resched 为真就调用 schedule()。
+2. schedule 在关中断的临界区里清 need_resched；从当前线程的下一个
+   沿 proc_list 环形扫描，idleproc 从链表头开始，选第一个 PROC_RUNNABLE；
+   一圈都没有就退回 idleproc；选中的线程 runs 加一，不是当前线程才
+   proc_run。
+3. proc_run 在关中断的临界区里更新 current、按 pgdir 写 satp 并刷 TLB、
+   调用 switch_to；目标等于当前线程直接返回。
+4. 写 satp 用 Sv39：模式位 8 左移 60 位时要先转成 64 位再移位，
+   pgdir 右移 12 位取物理页号；不要用 libs/riscv.h 里的 lsatp()，
+   它是 Sv32 遗留，写法参照 pmm.c 的 enable_paging()。
+5. switch_to 按 struct context 的字段顺序保存和恢复 ra、sp、s0~s11，
+   偏移与结构体一致，最后 ret 跳到新线程的 ra。
+6. 不修改函数签名，不动题目测试；保留 //LAB4 function3 标记并填学号。
+给出每个函数的关中断范围，并说明为什么选线程和切线程必须在同一个
+临界区语义内完成。
+```
+
+#### 与评分测试的关系
+
+`tools/test_lab4.c` 里 `test_lab4_process_create()` 检查 `idleproc` 的 pid、状态、`kstack=bootstack`、`tf/context.ra` 为空，以及 `initproc` 的 pid=1、父进程、`mm==NULL`、`context.ra/sp` 非零；`test_lab4_schedule()` 用 `kernel_thread` 造两个测试线程，自己调用 8 次 `schedule()`，要求两个线程都真正跑过。评分脚本按 `[Test PMM] PASS`、`[Test Process Create] PASS`、`[Test Schedule] PASS` 三组各 10 分检查，第三组还要求出现 `this initproc, pid = 1, name = "init"` 和两句 `To U:` 输出，也就是要求 `initproc` 确实被调度执行过，而不只是结构上存在。
 
 ### 4.5 本人范围的真实问题、处理与未解决事项
 
