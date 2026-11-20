@@ -1,0 +1,29 @@
+[
+  {
+    "source": "/Users/edwin/Desktop/截屏2026-11-20 21.18.16.png",
+    "report_image": "report/images/B01-debian-build-success.png",
+    "sha256": "b46b61034978d05187cc23005963c7703053b2d35693095d2a8e747c7fbfb3dd",
+    "width": 2018,
+    "height": 512,
+    "purpose": "编译和链接成功，生成kernel及ucore.img",
+    "image_edits": "none; original bytes preserved"
+  },
+  {
+    "source": "/Users/edwin/Desktop/截屏2026-11-20 21.23.44.png",
+    "report_image": "report/images/B03-debian-init-executed.png",
+    "sha256": "358a680833cb612ff1bcf26674ad5e6afde80d33c12050f62dfe972334f00902",
+    "width": 1112,
+    "height": 804,
+    "purpose": "真实页表检查、VMA检查通过，init执行后进入do_exit占位panic",
+    "image_edits": "none; original bytes preserved"
+  },
+  {
+    "source": "/Users/edwin/Desktop/截屏2026-11-20 21.30.06.png",
+    "report_image": "report/images/B04-debian-grade-30of30.png",
+    "sha256": "3e224c1e164a8976fc1de994236d529a847b4d9228fbb1e7e48ee511347bc280",
+    "width": 946,
+    "height": 212,
+    "purpose": "PMM、Process Create、Schedule三组OK，总分30/30",
+    "image_edits": "none; original bytes preserved"
+  }
+]

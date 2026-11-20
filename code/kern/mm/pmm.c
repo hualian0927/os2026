@@ -257,7 +257,8 @@ pte_t *get_pte(pde_t *pgdir, uintptr_t la, bool create)
         set_page_ref(page, 1);
         uintptr_t pa = page2pa(page);
         memset(KADDR(pa), 0, PGSIZE);
-        *pdep1 = pte_create(page2ppn(page), PTE_U | PTE_V);
+        /* Sv39 non-leaf entries must keep U, A and D clear. */
+        *pdep1 = ptd_create(page2ppn(page));
         new_pd = page;
         table_changed = 1;
     }
@@ -280,7 +281,7 @@ pte_t *get_pte(pde_t *pgdir, uintptr_t la, bool create)
         set_page_ref(page, 1);
         uintptr_t pa = page2pa(page);
         memset(KADDR(pa), 0, PGSIZE);
-        *pdep0 = pte_create(page2ppn(page), PTE_U | PTE_V);
+        *pdep0 = ptd_create(page2ppn(page));
         table_changed = 1;
     }
     if (table_changed)
@@ -394,7 +395,8 @@ static void check_pgdir(void)
     assert((ptep = get_pte(boot_pgdir_va, PGSIZE, 0)) != NULL);
     assert(*ptep & PTE_U);
     assert(*ptep & PTE_W);
-    assert(boot_pgdir_va[0] & PTE_U);
+    /* U belongs to the leaf; Sv39 reserves U/A/D in non-leaf entries. */
+    assert((boot_pgdir_va[0] & (PTE_U | PTE_A | PTE_D)) == 0);
     assert(page_ref(p2) == 1);
 
     assert(page_insert(boot_pgdir_va, p1, PGSIZE, 0) == 0);

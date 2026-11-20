@@ -1,0 +1,24 @@
+{
+  "change": "Sv39 non-leaf U/A/D cleared using ptd_create; contradictory parent-U self-check corrected, leaf-U assertions preserved.",
+  "command": [
+    "clang",
+    "--target=riscv64-unknown-elf",
+    "-std=gnu99",
+    "-fsyntax-only",
+    "-fno-builtin",
+    "-nostdinc",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/libs",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/mm",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/driver",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/debug",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/trap",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/sync",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/process",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/schedule",
+    "/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/mm/pmm.c"
+  ],
+  "exit_code": 0,
+  "diagnostics": "/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/mm/pmm.c:228:5: warning: switch condition has boolean value [-Wswitch-bool]\n  228 |     static_assert(KERNBASE % PTSIZE == 0 && KERNTOP % PTSIZE == 0);\n      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/debug/assert.h:24:5: note: expanded from macro 'static_assert'\n   24 |     switch (x) { case 0: case (x): ; }\n      |     ^       ~\n1 warning generated.\n",
+  "runtime_validation": "Pending Debian rebuild and boot; source repair not yet runtime-verified.",
+  "source_sha256": "582624b4c1776714da4c9feb3ba4e5f4e443a4fc1910c18dc042e6768d20bb08"
+}

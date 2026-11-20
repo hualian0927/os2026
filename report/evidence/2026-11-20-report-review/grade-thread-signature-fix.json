@@ -1,0 +1,25 @@
+{
+  "change": "test_lab4_thread return type void -> int to match kernel_thread; body, assertions, scoring unchanged.",
+  "command": [
+    "clang",
+    "--target=riscv64-unknown-elf",
+    "-std=gnu99",
+    "-fsyntax-only",
+    "-Werror=incompatible-function-pointer-types",
+    "-Wall",
+    "-fno-builtin",
+    "-nostdinc",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/libs",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/mm",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/driver",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/debug",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/trap",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/sync",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/process",
+    "-I/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/kern/schedule",
+    "/Users/edwin/2026-FALL/Operating Systems/os2026-lab4/code/tools/test_lab4.c"
+  ],
+  "exit_code": 0,
+  "diagnostics": "",
+  "runtime_validation": "Pending Debian make grade rerun; previous 0/30 resulted from compile failure, not executed functional tests."
+}

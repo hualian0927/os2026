@@ -1,0 +1,6 @@
+ + cc libs/printfmt.c + cc libs/string.c + ld bin/kernel riscv64-unknown-elf-objcopy bin/kernel --strip-all -O binary bin/ucore.img gmake[1]: 离开目录“/tmp/lab4_grade”
+  -check PMM:                                OK
+  -check Process Create:                     OK
+  -check Schedule:                           OK
+Total Score: 30/30
+edwin@edwin:~/OS/os2026-lab4/code$
