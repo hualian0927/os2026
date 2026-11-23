@@ -1,0 +1,13 @@
+code/obj/
+code/bin/
+**/__pycache__/
+*.pyc
+*.o
+*.d
+*.elf
+*.img
+*.bin
+report/evidence/**/kernel
+code/.gdb_history
+code/.gdb.in
+code/.qemu.out

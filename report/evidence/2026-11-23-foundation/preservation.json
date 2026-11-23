@@ -1,0 +1,41 @@
+{
+  "changed_files": [
+    "Makefile",
+    "kern/init/entry.S",
+    "kern/mm/default_pmm.c",
+    "kern/mm/pmm.c",
+    "kern/process/proc.c",
+    "kern/process/switch.S",
+    "kern/schedule/sched.c",
+    "kern/trap/trap.c",
+    "kern/trap/trapentry.S"
+  ],
+  "checks": {
+    "kern/mm/pmm.c:check_alloc_page": true,
+    "kern/mm/pmm.c:check_pgdir": true,
+    "kern/mm/pmm.c:check_boot_pgdir": true,
+    "kern/mm/default_pmm.c:basic_check": true,
+    "kern/mm/default_pmm.c:default_check": true,
+    "kern/trap/trap.c:trap": true,
+    "SAVE_ALL_unchanged": true,
+    "protected:kern/mm/vmm.c": true,
+    "protected:kern/syscall/syscall.c": true,
+    "protected:tools/boot.ld": true,
+    "protected:tools/function.mk": true,
+    "protected:tools/gdbinit": true,
+    "protected:tools/grade.sh": true,
+    "protected:tools/inject.py": true,
+    "protected:tools/kernel.ld": true,
+    "protected:tools/sign.c": true,
+    "protected:tools/test_lab5.c": true,
+    "protected:tools/test_lab5.h": true,
+    "protected:tools/user.ld": true,
+    "protected:tools/vector.c": true,
+    "protected:user/libs/syscall.c": true,
+    "markers:kern/process/proc.c": true,
+    "markers:kern/mm/pmm.c": true,
+    "lab4_unchanged": true,
+    "original_archive_unchanged": true
+  },
+  "all_protected_unchanged": true
+}

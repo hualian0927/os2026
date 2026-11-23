@@ -1,0 +1,17 @@
+$ make -B obj/kern/mm/pmm.o obj/kern/mm/default_pmm.o obj/kern/init/entry.o obj/kern/trap/trapentry.o obj/kern/trap/trap.o obj/kern/syscall/syscall.o obj/user/libs/syscall.o obj/kern/process/proc.o obj/kern/process/switch.o obj/kern/schedule/sched.o
++ cc kern/mm/pmm.c
++ cc kern/mm/default_pmm.c
++ cc kern/init/entry.S
++ cc kern/trap/trapentry.S
++ cc kern/trap/trap.c
++ cc kern/syscall/syscall.c
++ cc user/libs/syscall.c
++ cc kern/process/proc.c
+kern/process/proc.c:88:28: warning: 'alloc_proc' used but never defined
+   88 | static struct proc_struct *alloc_proc(void);
+      |                            ^~~~~~~~~~
+kern/process/proc.c:89:12: warning: 'init_main' used but never defined
+   89 | static int init_main(void *arg);
+      |            ^~~~~~~~~
++ cc kern/process/switch.S
++ cc kern/schedule/sched.c

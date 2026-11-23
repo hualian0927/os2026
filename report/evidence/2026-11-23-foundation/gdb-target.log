@@ -1,0 +1,6 @@
+make: Entering directory '/home/lhl/os2026/lab5/lab5_new'
+/home/lhl/anaconda3/envs/os2026/bin/gdb-multiarch -q \
+    -ex 'file bin/kernel' \
+    -ex 'set arch riscv:rv64' \
+    -ex 'target remote localhost:1234'
+make: Leaving directory '/home/lhl/os2026/lab5/lab5_new'

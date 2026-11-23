@@ -1,0 +1,38 @@
+{
+  "objects": {
+    "command": [
+      "make",
+      "-B",
+      "obj/kern/mm/pmm.o",
+      "obj/kern/mm/default_pmm.o",
+      "obj/kern/init/entry.o",
+      "obj/kern/trap/trapentry.o",
+      "obj/kern/trap/trap.o",
+      "obj/kern/syscall/syscall.o",
+      "obj/user/libs/syscall.o",
+      "obj/kern/process/proc.o",
+      "obj/kern/process/switch.o",
+      "obj/kern/schedule/sched.o"
+    ],
+    "returncode": 0
+  },
+  "full-build": {
+    "command": [
+      "make",
+      "-k",
+      "-j2"
+    ],
+    "returncode": 2
+  },
+  "grade": {
+    "command": [
+      "make",
+      "grade",
+      "GRADE_TMP=/tmp/lab5-audit-grade-injected-xbdodhd7"
+    ],
+    "returncode": 2,
+    "source_snapshot": "/tmp/lab5-audit-grade-source-b0lxnti9",
+    "injected_copy": "/tmp/lab5-audit-grade-injected-xbdodhd7",
+    "production_tree_used": false
+  }
+}

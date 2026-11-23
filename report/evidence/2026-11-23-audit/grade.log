@@ -1,0 +1,4 @@
+Source snapshot: /tmp/lab5-audit-grade-source-b0lxnti9
+$ make grade GRADE_TMP=/tmp/lab5-audit-grade-injected-xbdodhd7
+[lab5 inject] ERROR: Function location is missing or ambiguous: init_main
+make: *** [Makefile:271: grade] Error 1

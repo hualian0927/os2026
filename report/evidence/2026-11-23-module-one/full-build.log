@@ -1,0 +1,26 @@
+$ make -k -j2
++ ld bin/kernel
+riscv64-unknown-elf-ld: obj/kern/trap/trap.o: in function `trap_in_kernel':
+/home/lhl/os2026/lab5/lab5_new/kern/trap/trap.c:46:(.text.exception_handler+0x9a): undefined reference to `do_exit'
+riscv64-unknown-elf-ld: obj/kern/trap/trap.o: in function `trap_dispatch':
+/home/lhl/os2026/lab5/lab5_new/kern/trap/trap.c:153:(.text.trap+0x7a): undefined reference to `do_exit'
+riscv64-unknown-elf-ld: obj/kern/process/proc.o: in function `proc_init':
+/home/lhl/os2026/lab5/lab5_new/kern/process/proc.c:115:(.text.proc_init+0x32): undefined reference to `alloc_proc'
+riscv64-unknown-elf-ld: /home/lhl/os2026/lab5/lab5_new/kern/process/proc.c:129:(.text.proc_init+0x90): undefined reference to `init_main'
+riscv64-unknown-elf-ld: /home/lhl/os2026/lab5/lab5_new/kern/process/proc.c:127:(.text.proc_init+0xa2): undefined reference to `kernel_thread'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_pgdir':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:126:(.text.sys_pgdir+0x4): undefined reference to `print_pgdir'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_kill':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:106:(.text.sys_kill+0x12): undefined reference to `do_kill'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_yield':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:100:(.text.sys_yield+0x0): undefined reference to `do_yield'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_fork':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:69:(.text.sys_fork+0xe): undefined reference to `do_fork'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_exit':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:62:(.text.sys_exit+0x12): undefined reference to `do_exit'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_exec':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:96:(.text.sys_exec+0x46): undefined reference to `do_execve'
+riscv64-unknown-elf-ld: obj/kern/syscall/syscall.o: in function `sys_wait':
+/home/lhl/os2026/lab5/lab5_new/kern/syscall/syscall.c:81:(.text.sys_wait+0x38): undefined reference to `do_wait'
+make: *** [Makefile:172: bin/kernel] Error 1
+make: Target 'TARGETS' not remade because of errors.

@@ -1,0 +1,156 @@
+{
+  "initial_source_digest": "8ccd48786a012922324e7f267e7822f90ece1ade3bb23fbcdd215b1b8aa9656c",
+  "source_digest": "c430c8abf12d45dde02320b90ac644b8e5e5e1e6fc8e2920cccee913cc1ee504",
+  "production_changed_this_round": [
+    "kern/trap/trap.c"
+  ],
+  "changed_vs_original_package": [
+    "Makefile",
+    "kern/init/entry.S",
+    "kern/mm/default_pmm.c",
+    "kern/mm/pmm.c",
+    "kern/process/proc.c",
+    "kern/process/switch.S",
+    "kern/schedule/sched.c",
+    "kern/syscall/syscall.c",
+    "kern/trap/trap.c",
+    "kern/trap/trapentry.S",
+    "user/libs/syscall.c"
+  ],
+  "protected_files_and_SAVE_ALL_still_equal_original": true,
+  "runs": {
+    "foundation": {
+      "directory": "2026-11-23-foundation/run-sa7sq6eh",
+      "summary": "2026-11-23-foundation/run-sa7sq6eh/summary.json",
+      "checks": 13,
+      "source_unchanged": true,
+      "meaning": "isolated checks passed"
+    },
+    "module_one": {
+      "directory": "2026-11-23-module-one/run-4kl6dlox",
+      "summary": "2026-11-23-module-one/run-4kl6dlox/summary.json",
+      "checks": 4,
+      "source_unchanged": true,
+      "meaning": "isolated checks passed"
+    },
+    "hardware_timer": {
+      "directory": "2026-11-23-module-one/run-qh0n7lno",
+      "summary": "2026-11-23-module-one/run-qh0n7lno/summary.json",
+      "checks": 1,
+      "source_unchanged": true,
+      "meaning": "isolated checks passed"
+    },
+    "framework_conflict": {
+      "directory": "2026-11-23-foundation/run-kug6w2b2",
+      "summary": "2026-11-23-foundation/run-kug6w2b2/summary.json",
+      "checks": 1,
+      "source_unchanged": true,
+      "meaning": "expected framework conflict observation, NOT self-test pass"
+    }
+  },
+  "builds": {
+    "objects-after-fix": {
+      "command": [
+        "make",
+        "-B",
+        "obj/kern/mm/pmm.o",
+        "obj/kern/mm/default_pmm.o",
+        "obj/kern/init/entry.o",
+        "obj/kern/trap/trapentry.o",
+        "obj/kern/trap/trap.o",
+        "obj/kern/syscall/syscall.o",
+        "obj/user/libs/syscall.o",
+        "obj/kern/process/proc.o",
+        "obj/kern/process/switch.o",
+        "obj/kern/schedule/sched.o"
+      ],
+      "returncode": 0
+    },
+    "full-build-after-fix": {
+      "command": [
+        "make",
+        "-k",
+        "-j2"
+      ],
+      "returncode": 2
+    },
+    "grade-after-fix": {
+      "command": [
+        "make",
+        "grade",
+        "GRADE_TMP=/tmp/lab5-audit-final-grade-injected-9_3ne__z"
+      ],
+      "returncode": 2,
+      "source_snapshot": "/tmp/lab5-audit-final-grade-source-abzfrfh1",
+      "injected_copy": "/tmp/lab5-audit-final-grade-injected-9_3ne__z",
+      "production_tree_used": false
+    }
+  },
+  "log_sha256": {
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-6/console.log": "bf876f780557f471434c8edac350f793ab802caa593f54ca726e7a8be194e255",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-6/build.log": "8577311f052a78ed00fe586f526924349fa822ccd692e00c8302f7ca005bd6cf",
+    "2026-11-23-foundation/run-sa7sq6eh/context-s-O0/console.log": "1e03d4b2423da1b4534466a2719018b5e90dd6e954b7256798d79adba3edae00",
+    "2026-11-23-foundation/run-sa7sq6eh/context-s-O0/build.log": "e2ed269fef27371b49aea9fe6043c0fc45ab3e3a58ee169a2f1d1ea20060e096",
+    "2026-11-23-foundation/run-sa7sq6eh/foundation-O2/console.log": "d7b26e110d843785229b46b67eff4e9694966afe4052e15c9d3bdc2920eae98e",
+    "2026-11-23-foundation/run-sa7sq6eh/foundation-O2/build.log": "dee86b3bc36025581ebd2c18a4ee368cf3287ddf19dce60e5fad81b8f7254b1a",
+    "2026-11-23-foundation/run-sa7sq6eh/startup/console.log": "ff689d2594670f77b80d69d95e23fc4ad95f85afdced02e1edcb1d724e3bf732",
+    "2026-11-23-foundation/run-sa7sq6eh/startup/gdb.log": "cd11b9316260c115fe181f92dc822426b231906fff6e83b7b5d8e50a78945bcb",
+    "2026-11-23-foundation/run-sa7sq6eh/startup/build.log": "ba0a0972821018a450796b188686c0fd12f2b2f64dc54ea2c9810deeb65a5e5b",
+    "2026-11-23-foundation/run-sa7sq6eh/startup/gdb-qemu.log": "ff689d2594670f77b80d69d95e23fc4ad95f85afdced02e1edcb1d724e3bf732",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-5/console.log": "23ae66975580d05261e7448eeb15898ed1e3b8df510ca5e255fb68aa55d69b92",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-5/build.log": "75e2ebc5bad8841c4712aeaa5dcb5776ed89127935bdc84a33334411950ecfdd",
+    "2026-11-23-foundation/run-sa7sq6eh/foundation-O0/console.log": "001b657bbbef436e1df44bdd91ab555cb89c2a04cacf153764f69b67b416c7dd",
+    "2026-11-23-foundation/run-sa7sq6eh/foundation-O0/build.log": "c80f1d0664b4c3bd73fca518dadcde071121699be6a6ebc444212c2e99459a20",
+    "2026-11-23-foundation/run-sa7sq6eh/context-s-O2/console.log": "1e03d4b2423da1b4534466a2719018b5e90dd6e954b7256798d79adba3edae00",
+    "2026-11-23-foundation/run-sa7sq6eh/context-s-O2/build.log": "2ba12ad71ca3ab0bf81f7a39bd147af1a4f17eaeb05c7e523ae14f985e2bd652",
+    "2026-11-23-foundation/run-sa7sq6eh/context-u-O2/console.log": "cead39e1e969bf0177f23d5312ff270e7ed9bdf461825addb94e1f3e98cddb42",
+    "2026-11-23-foundation/run-sa7sq6eh/context-u-O2/build.log": "5a83ad891556ed0773cd123ab2ff7b6229e8dd2e70f26516dd8933e00e54f496",
+    "2026-11-23-foundation/run-sa7sq6eh/context-u-O0/console.log": "cead39e1e969bf0177f23d5312ff270e7ed9bdf461825addb94e1f3e98cddb42",
+    "2026-11-23-foundation/run-sa7sq6eh/context-u-O0/build.log": "7ed604fa4b4cc10a4e82a25fa02d7b1c9fad2d66251b01ee1005c82c2a4a13f8",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-3/console.log": "88741a830ee428de395f37d38d3672b59b50c19623cf1d201cfcabcef315ed45",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-3/build.log": "065b6dd2c4e9e773d6fad4bbcba135b059bfb3c1f1005dbb044ee867c8377e4c",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-2/console.log": "48724ca430ea334b839a9a3d0816d2103462ea676d6159ae75ed8922c751d8a3",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-2/build.log": "7f5e0314e96c8c556553d8f130ead0003c7812562bbebe7432e8736c8c438849",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-1/console.log": "7db150eae512dd02970ecc0c448be379172ec43b07f0dcd80b6761990bc1442d",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-1/build.log": "1f92f36682625ce2b634132abc588569e5f76b153c0c4d62f9d235653742e4d0",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-4/console.log": "59cfc9aa812973a10a788825082bfa9b0328160e17f3f742245997549456b824",
+    "2026-11-23-foundation/run-sa7sq6eh/page-init-4/build.log": "dc57da4d0e27ee854c8828b88a096fa44001f048aaaee2c884c93f08161f4cd3",
+    "2026-11-23-module-one/run-4kl6dlox/interface-O0/console.log": "ce23e63f0431651e4b71b19c47480f4518529d7fc395b41319effd23f2ea8ca0",
+    "2026-11-23-module-one/run-4kl6dlox/interface-O0/build.log": "5e0037abd390d732ffd191cc594ece096a3d4dae94126dc4b8169c12e52b4b56",
+    "2026-11-23-module-one/run-4kl6dlox/user-O0/console.log": "3417f43b71d473ecf6482d302b7c8b0dddc3d5480b7052ba8aeb477ea2e5f344",
+    "2026-11-23-module-one/run-4kl6dlox/user-O0/build.log": "aa8632573b8886059ed2cbba8b1411682e786b3ebe9559008c69885ce3cac46d",
+    "2026-11-23-module-one/run-4kl6dlox/user-O0/user-build.log": "187bfcb37acc522f65b070da33ba10287493a69d58587dcd105406838a79d7d8",
+    "2026-11-23-module-one/run-4kl6dlox/user-O2/console.log": "3417f43b71d473ecf6482d302b7c8b0dddc3d5480b7052ba8aeb477ea2e5f344",
+    "2026-11-23-module-one/run-4kl6dlox/user-O2/build.log": "0d5aeafe9e4239175cf61d243cc158bcd6d5ea4c4f6a1b5b39a51bc9edd2d8b9",
+    "2026-11-23-module-one/run-4kl6dlox/user-O2/user-build.log": "a5ce7f5809eb9db5a999635785c8809790cb89ba3563b3210c6ba1f373ca5f57",
+    "2026-11-23-module-one/run-4kl6dlox/interface-O2/console.log": "ce23e63f0431651e4b71b19c47480f4518529d7fc395b41319effd23f2ea8ca0",
+    "2026-11-23-module-one/run-4kl6dlox/interface-O2/build.log": "f437f03a29a87cb377569fb807780a3c17d87e25f12fe17158ad1d8c542de231",
+    "2026-11-23-module-one/run-qh0n7lno/timer-O2/console.log": "21c57e280f240a77cbf2871d83cd59fae03754a84f7525c6acc98d4c6d203820",
+    "2026-11-23-module-one/run-qh0n7lno/timer-O2/build.log": "626e27186a74ad6ef7b2a6f146ae311f32fd836d747a36a938c55a3cb59cde2c",
+    "2026-11-23-module-one/run-qh0n7lno/timer-O2/user-build.log": "b7d91aa09b8caa77984921ab5505c2d4abc702fa89113a19e67838c25a6f1e86",
+    "2026-11-23-foundation/run-kug6w2b2/framework-selftest/console.log": "ebf44aa58dbd9585549805c1eada2ce43f8bdf2527be6025347f28117b5755d5",
+    "2026-11-23-foundation/run-kug6w2b2/framework-selftest/build.log": "20d098b9d46d25763af2549378a5d4cb6728682deea9f54386715cb34d1707e7"
+  },
+  "pre_fix_hardware_timer_failure": {
+    "directory": "2026-11-23-module-one/run-1vgg8sxw",
+    "error": "Boot failed: /home/lhl/os2026/lab5/evidence/2026-11-23-module-one/run-1vgg8sxw/timer-O2/console.log",
+    "observed": "100 ticks; no schedule observer reached before 2-second timeout",
+    "source_digest": "8ccd48786a012922324e7f267e7822f90ece1ade3bb23fbcdd215b1b8aa9656c"
+  },
+  "test_source_manifest": {
+    "tests/foundation/probe.S": "c6d28286e16c416f685a4987dd1b203aa2b2f34155f120c8fdd85a8522be8f01",
+    "tests/foundation/context.c": "e062078ec41ea44ea3cc578c59b5d75cf3697b1ed9cf22012dfed3c9e06a4169",
+    "tests/foundation/README.md": "ec3312f166abbfe3c0cf1ffcc23ae6fdf4eadbc0f59409fb177f6afd164c99c9",
+    "tests/foundation/user.c": "681333f82f75edf5d849067da3d982fbaba2220eeab5ca76f4487d47da1df558",
+    "tests/foundation/user.S": "ec0c454a94b575832b751bbe2f6f17f61f2f7cbd0bea9978ba52c25db06a923f",
+    "tests/foundation/startup.c": "4233ba75f407b6a9a649f191cec6af87fa4d52078caba7baca7ae98b98d7f9be",
+    "tests/foundation/run.py": "b823803412b8f47ef648f1575f582f3c229e7fea2316a89b0d962eb8cd607b02",
+    "tests/foundation/foundation.c": "61687ad5c15872b0f0b8623afe6706d4ef26bbc858622080664a9a1312889ff2",
+    "tests/module_one/user_raw.S": "d3ce65acb9ab3746438edd020dd6eed4494bd3fdbb7b607adb423aad666a8fc5",
+    "tests/module_one/user_kernel.c": "0e9bc3d22d5c51e7764ecbbfa5ce57be6f39b5228cb6869cc5deb3123d8d1d58",
+    "tests/module_one/README.md": "077c892a6f5bdf50bedc2ef80d057f2e6a8c0fdbde665d0c6aff428782c287d7",
+    "tests/module_one/user_probe.c": "3ecae0c2e048706cf325bd601c8b1614bbfec1289a599ea819b5641dbb838ac8",
+    "tests/module_one/run.py": "91e3536a16ee6aa9259b39d192109dcd6589532735c4b8f7a41d1ed16b55d49b",
+    "tests/module_one/interface.c": "aee6a8e7b8de3b2ceaf5dca2b8df70bdda6656abf6c563c0c9b4eb79313e9a1d"
+  }
+}

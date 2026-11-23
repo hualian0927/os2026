@@ -1,0 +1,20 @@
+{
+  "runs": {
+    "startup": "run-25qoj4w1",
+    "memory": "run-i9tjwwk8",
+    "S-O0": "run-25qoj4w1",
+    "S-O2": "run-9nhpza5d",
+    "U-O0-O2": "run-1ri7dj9y",
+    "framework-conflict": "run-yrj9sz00",
+    "original-startup": "run-9wlhooh_"
+  },
+  "production_objects_compiled": true,
+  "full_build_passed": false,
+  "grade_run": false,
+  "known_blockers": [
+    "module-one sys_* definitions not yet implemented",
+    "module-two/three/four still incomplete",
+    "original non-leaf U assertion conflicts with hardware access",
+    "original grade device-loader boot differs from current OpenSBI kernel handoff"
+  ]
+}

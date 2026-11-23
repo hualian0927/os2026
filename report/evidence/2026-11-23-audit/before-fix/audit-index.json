@@ -1,0 +1,136 @@
+{
+  "source_digest": "8ccd48786a012922324e7f267e7822f90ece1ade3bb23fbcdd215b1b8aa9656c",
+  "production_unchanged_this_round": true,
+  "changed_vs_original_package": [
+    "Makefile",
+    "kern/init/entry.S",
+    "kern/mm/default_pmm.c",
+    "kern/mm/pmm.c",
+    "kern/process/proc.c",
+    "kern/process/switch.S",
+    "kern/schedule/sched.c",
+    "kern/syscall/syscall.c",
+    "kern/trap/trap.c",
+    "kern/trap/trapentry.S",
+    "user/libs/syscall.c"
+  ],
+  "runs": {
+    "foundation": {
+      "directory": "2026-11-23-foundation/run-ur1cqrj9",
+      "summary": "2026-11-23-foundation/run-ur1cqrj9/summary.json",
+      "checks": 13,
+      "source_unchanged": true,
+      "meaning": "isolated checks passed"
+    },
+    "module_one": {
+      "directory": "2026-11-23-module-one/run-p4tv6hso",
+      "summary": "2026-11-23-module-one/run-p4tv6hso/summary.json",
+      "checks": 4,
+      "source_unchanged": true,
+      "meaning": "isolated checks passed"
+    },
+    "framework_conflict": {
+      "directory": "2026-11-23-foundation/run-5mqb2oh3",
+      "summary": "2026-11-23-foundation/run-5mqb2oh3/summary.json",
+      "checks": 1,
+      "source_unchanged": true,
+      "meaning": "expected framework conflict observation, NOT self-test pass"
+    }
+  },
+  "builds": {
+    "objects": {
+      "command": [
+        "make",
+        "-B",
+        "obj/kern/mm/pmm.o",
+        "obj/kern/mm/default_pmm.o",
+        "obj/kern/init/entry.o",
+        "obj/kern/trap/trapentry.o",
+        "obj/kern/trap/trap.o",
+        "obj/kern/syscall/syscall.o",
+        "obj/user/libs/syscall.o",
+        "obj/kern/process/proc.o",
+        "obj/kern/process/switch.o",
+        "obj/kern/schedule/sched.o"
+      ],
+      "returncode": 0
+    },
+    "full-build": {
+      "command": [
+        "make",
+        "-k",
+        "-j2"
+      ],
+      "returncode": 2
+    },
+    "grade": {
+      "command": [
+        "make",
+        "grade",
+        "GRADE_TMP=/tmp/lab5-audit-grade-injected-xbdodhd7"
+      ],
+      "returncode": 2,
+      "source_snapshot": "/tmp/lab5-audit-grade-source-b0lxnti9",
+      "injected_copy": "/tmp/lab5-audit-grade-injected-xbdodhd7",
+      "production_tree_used": false
+    }
+  },
+  "log_sha256": {
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-6/console.log": "bf876f780557f471434c8edac350f793ab802caa593f54ca726e7a8be194e255",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-6/build.log": "a5e1464edb3ac7960c632e62d1a934da608a0ed678457f56694c20b15cfc02b0",
+    "2026-11-23-foundation/run-ur1cqrj9/context-s-O0/console.log": "1e03d4b2423da1b4534466a2719018b5e90dd6e954b7256798d79adba3edae00",
+    "2026-11-23-foundation/run-ur1cqrj9/context-s-O0/build.log": "694ced1dd36bb3dfc8f4c0e3ea337404f682b355b79cd03e0e19b8dbe5485dd1",
+    "2026-11-23-foundation/run-ur1cqrj9/foundation-O2/console.log": "d7b26e110d843785229b46b67eff4e9694966afe4052e15c9d3bdc2920eae98e",
+    "2026-11-23-foundation/run-ur1cqrj9/foundation-O2/build.log": "3d840e15b40e9317204307d5ff11987572fc26fe0b34d30e724e117db28138da",
+    "2026-11-23-foundation/run-ur1cqrj9/startup/console.log": "ff689d2594670f77b80d69d95e23fc4ad95f85afdced02e1edcb1d724e3bf732",
+    "2026-11-23-foundation/run-ur1cqrj9/startup/gdb.log": "2da6c6aed857a30af3f352ec87914ee24d9eb5fbb9130a430a988e27b0c21b76",
+    "2026-11-23-foundation/run-ur1cqrj9/startup/build.log": "951e851a7524071159ce247747611250be684fa4870859174c06026bf5388eb9",
+    "2026-11-23-foundation/run-ur1cqrj9/startup/gdb-qemu.log": "ff689d2594670f77b80d69d95e23fc4ad95f85afdced02e1edcb1d724e3bf732",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-5/console.log": "23ae66975580d05261e7448eeb15898ed1e3b8df510ca5e255fb68aa55d69b92",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-5/build.log": "418fec31a792fc3d8c673f79a33c9468ef7caf16eb45ca69277277db2062726e",
+    "2026-11-23-foundation/run-ur1cqrj9/foundation-O0/console.log": "001b657bbbef436e1df44bdd91ab555cb89c2a04cacf153764f69b67b416c7dd",
+    "2026-11-23-foundation/run-ur1cqrj9/foundation-O0/build.log": "cb04a87c79848dd4bec11ee7b2f0a79c6c6b43d208bb2b8be6e44319fb694566",
+    "2026-11-23-foundation/run-ur1cqrj9/context-s-O2/console.log": "1e03d4b2423da1b4534466a2719018b5e90dd6e954b7256798d79adba3edae00",
+    "2026-11-23-foundation/run-ur1cqrj9/context-s-O2/build.log": "98213e4f799e0819047ded0c4ebc9efba30d08a6f3feb917ceba3643bf0abb86",
+    "2026-11-23-foundation/run-ur1cqrj9/context-u-O2/console.log": "cead39e1e969bf0177f23d5312ff270e7ed9bdf461825addb94e1f3e98cddb42",
+    "2026-11-23-foundation/run-ur1cqrj9/context-u-O2/build.log": "93d5f1abebda42f6f3dcb7a36a817b676ee7be4c43d34cd93a7655d9cce42b2c",
+    "2026-11-23-foundation/run-ur1cqrj9/context-u-O0/console.log": "cead39e1e969bf0177f23d5312ff270e7ed9bdf461825addb94e1f3e98cddb42",
+    "2026-11-23-foundation/run-ur1cqrj9/context-u-O0/build.log": "017c14f9ec94218fa935320efecbaaea893c3bfb23ea674ff374bab376f8ee69",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-3/console.log": "88741a830ee428de395f37d38d3672b59b50c19623cf1d201cfcabcef315ed45",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-3/build.log": "990c04b2f8a5ef69f976120374c9131576919a923f6c31d88363eec3887bc376",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-2/console.log": "48724ca430ea334b839a9a3d0816d2103462ea676d6159ae75ed8922c751d8a3",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-2/build.log": "efde0ab02f9de12d7fa8de2e57c6751040971eb92430cad82bd90981dc030010",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-1/console.log": "7db150eae512dd02970ecc0c448be379172ec43b07f0dcd80b6761990bc1442d",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-1/build.log": "77551d7158de204bd2cb9c8bc4d9f3f1596be4d333c2ceb43ae7dcd069335cf4",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-4/console.log": "59cfc9aa812973a10a788825082bfa9b0328160e17f3f742245997549456b824",
+    "2026-11-23-foundation/run-ur1cqrj9/page-init-4/build.log": "e1539d29f0cb661561563d131c89062ab3e5f9c5bc1ef6580fb3eea8ac47e9ca",
+    "2026-11-23-module-one/run-p4tv6hso/interface-O0/console.log": "ce23e63f0431651e4b71b19c47480f4518529d7fc395b41319effd23f2ea8ca0",
+    "2026-11-23-module-one/run-p4tv6hso/interface-O0/build.log": "02713d639fbfea30b55afea2e3ae840d718bba87823ae404dc763b6a76b0b959",
+    "2026-11-23-module-one/run-p4tv6hso/user-O0/console.log": "3417f43b71d473ecf6482d302b7c8b0dddc3d5480b7052ba8aeb477ea2e5f344",
+    "2026-11-23-module-one/run-p4tv6hso/user-O0/build.log": "b9184cf2e2195b6b3d9afb66272e386bde4c60fb3ab4a43f95c80d44b4986aa2",
+    "2026-11-23-module-one/run-p4tv6hso/user-O0/user-build.log": "08104487029152cd9c0d35b2a9bdb8ccd1f92bd904c2bc51b20c99438f019fd2",
+    "2026-11-23-module-one/run-p4tv6hso/user-O2/console.log": "3417f43b71d473ecf6482d302b7c8b0dddc3d5480b7052ba8aeb477ea2e5f344",
+    "2026-11-23-module-one/run-p4tv6hso/user-O2/build.log": "0bffad1dc5af53a9ccabbbb804792544a0daae0c034f3181d4e6cf0b20ff1e31",
+    "2026-11-23-module-one/run-p4tv6hso/user-O2/user-build.log": "59e5ec1657d8c520e818f971cda1f09814d0f8ae84481c8492e37d910aaa3dfd",
+    "2026-11-23-module-one/run-p4tv6hso/interface-O2/console.log": "ce23e63f0431651e4b71b19c47480f4518529d7fc395b41319effd23f2ea8ca0",
+    "2026-11-23-module-one/run-p4tv6hso/interface-O2/build.log": "6cdec86695347116f33e86b3c09dd356ae2246a3e76938106bc5d4d3a5fc44b6",
+    "2026-11-23-foundation/run-5mqb2oh3/framework-selftest/console.log": "ebf44aa58dbd9585549805c1eada2ce43f8bdf2527be6025347f28117b5755d5",
+    "2026-11-23-foundation/run-5mqb2oh3/framework-selftest/build.log": "330b112393467786307db495ef15b68de09f8cef80e0a967a6722bf1c5e0dd50"
+  },
+  "test_source_manifest": {
+    "tests/foundation/probe.S": "c6d28286e16c416f685a4987dd1b203aa2b2f34155f120c8fdd85a8522be8f01",
+    "tests/foundation/context.c": "e062078ec41ea44ea3cc578c59b5d75cf3697b1ed9cf22012dfed3c9e06a4169",
+    "tests/foundation/README.md": "dc284d2fcd180858df183fcd55b08ea85d9571f29e3ac5b365890828a42f39c0",
+    "tests/foundation/user.c": "681333f82f75edf5d849067da3d982fbaba2220eeab5ca76f4487d47da1df558",
+    "tests/foundation/user.S": "ec0c454a94b575832b751bbe2f6f17f61f2f7cbd0bea9978ba52c25db06a923f",
+    "tests/foundation/startup.c": "4233ba75f407b6a9a649f191cec6af87fa4d52078caba7baca7ae98b98d7f9be",
+    "tests/foundation/run.py": "b823803412b8f47ef648f1575f582f3c229e7fea2316a89b0d962eb8cd607b02",
+    "tests/foundation/foundation.c": "61687ad5c15872b0f0b8623afe6706d4ef26bbc858622080664a9a1312889ff2",
+    "tests/module_one/user_raw.S": "d3ce65acb9ab3746438edd020dd6eed4494bd3fdbb7b607adb423aad666a8fc5",
+    "tests/module_one/user_kernel.c": "cd8151cafd4cd4a66b5d0420463106d4d95a2ae408b5f4f1930da0d3b74b57a7",
+    "tests/module_one/README.md": "19316457114bfa7b624c46c0ea0560560d9e25723775745ceed35c5ea4c74a59",
+    "tests/module_one/user_probe.c": "3ecae0c2e048706cf325bd601c8b1614bbfec1289a599ea819b5641dbb838ac8",
+    "tests/module_one/run.py": "8ecce9e857ec06a1ba6b9f9432b404c57fe9c30612ffd54635e8fd796a2a535c",
+    "tests/module_one/interface.c": "aee6a8e7b8de3b2ceaf5dca2b8df70bdda6656abf6c563c0c9b4eb79313e9a1d"
+  }
+}

@@ -1,0 +1,4 @@
+$ make obj/kern/syscall/syscall.o obj/kern/trap/trap.o obj/user/libs/syscall.o
++ cc kern/syscall/syscall.c
++ cc kern/trap/trap.c
++ cc user/libs/syscall.c

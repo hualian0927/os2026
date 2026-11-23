@@ -1,0 +1,15 @@
+{
+  "changed_production_files": [
+    "kern/syscall/syscall.c",
+    "kern/trap/trap.c",
+    "user/libs/syscall.c"
+  ],
+  "all_other_production_files_unchanged": true,
+  "grading_tests_unchanged": true,
+  "trapentry_and_trapframe_unchanged": true,
+  "versions": {
+    "riscv64-unknown-elf-gcc": "riscv64-unknown-elf-gcc (13.2.0-11ubuntu1+12) 13.2.0",
+    "qemu-system-riscv64": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "gdb-multiarch": "GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1"
+  }
+}

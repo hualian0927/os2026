@@ -1,0 +1,10 @@
+make: Entering directory '/home/lhl/os2026/lab5/lab5_new'
+make: 'obj/kern/mm/pmm.o' is up to date.
+make: 'obj/kern/mm/default_pmm.o' is up to date.
+make: 'obj/kern/trap/trapentry.o' is up to date.
+make: 'obj/kern/trap/trap.o' is up to date.
+make: 'obj/kern/process/proc.o' is up to date.
+make: 'obj/kern/process/switch.o' is up to date.
+make: 'obj/kern/schedule/sched.o' is up to date.
++ cc kern/init/entry.S
+make: Leaving directory '/home/lhl/os2026/lab5/lab5_new'

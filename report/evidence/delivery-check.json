@@ -1,0 +1,24 @@
+{
+  "source_digest": "c430c8abf12d45dde02320b90ac644b8e5e5e1e6fc8e2920cccee913cc1ee504",
+  "production_files": 96,
+  "packaged_runner_adaptation": "resolve ../code when report/lab5_new is absent",
+  "runs": {
+    "foundation": {
+      "directory": "2026-11-23-foundation/run-fbv7v921",
+      "checks": 13,
+      "passed": true
+    },
+    "module_one": {
+      "directory": "2026-11-23-module-one/run-yeddt0jy",
+      "checks": 4,
+      "passed": true
+    },
+    "timer": {
+      "directory": "2026-11-23-module-one/run-fkja4z1w",
+      "checks": 1,
+      "passed": true
+    }
+  },
+  "screenshots": "pending actual capture; images/README.md only",
+  "prompt": "recording paused; no fabricated history"
+}

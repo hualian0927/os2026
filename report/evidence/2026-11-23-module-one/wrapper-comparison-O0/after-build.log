@@ -1,0 +1,1 @@
+$ riscv64-unknown-elf-gcc -mcmodel=medany -std=gnu99 -g -fno-builtin -nostdinc -fno-stack-protector -I/home/lhl/os2026/lab5/lab5_new/libs -I/home/lhl/os2026/lab5/lab5_new/user/libs -O0 -c /home/lhl/os2026/lab5/lab5_new/user/libs/syscall.c -o /home/lhl/os2026/lab5/evidence/2026-11-23-module-one/wrapper-comparison-O0/after.o

@@ -1,0 +1,110 @@
++ cc kern/init/init.c
++ cc kern/init/entry.S
++ cc kern/libs/readline.c
++ cc kern/libs/stdio.c
++ cc kern/debug/kdebug.c
++ cc kern/debug/kmonitor.c
++ cc kern/debug/panic.c
++ cc kern/driver/clock.c
++ cc kern/driver/console.c
++ cc kern/driver/dtb.c
++ cc kern/driver/intr.c
++ cc kern/driver/picirq.c
++ cc kern/trap/trap.c
++ cc kern/trap/trapentry.S
++ cc kern/mm/default_pmm.c
++ cc kern/mm/kmalloc.c
+kern/mm/kmalloc.c: In function '__slob_free_pages':
+kern/mm/kmalloc.c:92:29: warning: passing argument 1 of 'kva2page' makes pointer from integer without a cast [-Wint-conversion]
+   92 |         free_pages(kva2page(kva), 1 << order);
+      |                             ^~~
+      |                             |
+      |                             long unsigned int
+In file included from kern/mm/kmalloc.c:7:
+kern/mm/pmm.h:117:16: note: expected 'void *' but argument is of type 'long unsigned int'
+  117 | kva2page(void *kva)
+      |          ~~~~~~^~~
++ cc kern/mm/pmm.c
++ cc kern/mm/vmm.c
++ cc kern/process/entry.S
++ cc kern/process/proc.c
+kern/process/proc.c:88:28: warning: 'alloc_proc' used but never defined
+   88 | static struct proc_struct *alloc_proc(void);
+      |                            ^~~~~~~~~~
+kern/process/proc.c:89:12: warning: 'init_main' used but never defined
+   89 | static int init_main(void *arg);
+      |            ^~~~~~~~~
++ cc kern/process/switch.S
++ cc kern/schedule/sched.c
++ cc kern/syscall/syscall.c
+kern/syscall/syscall.c:11:29: error: 'sys_exit' undeclared here (not in a function); did you mean 'SYS_exit'?
+   11 |     [SYS_exit]              sys_exit,
+      |                             ^~~~~~~~
+      |                             SYS_exit
+kern/syscall/syscall.c:12:29: error: 'sys_fork' undeclared here (not in a function); did you mean 'SYS_fork'?
+   12 |     [SYS_fork]              sys_fork,
+      |                             ^~~~~~~~
+      |                             SYS_fork
+kern/syscall/syscall.c:13:29: error: 'sys_wait' undeclared here (not in a function); did you mean 'SYS_wait'?
+   13 |     [SYS_wait]              sys_wait,
+      |                             ^~~~~~~~
+      |                             SYS_wait
+kern/syscall/syscall.c:14:29: error: 'sys_exec' undeclared here (not in a function); did you mean 'SYS_exec'?
+   14 |     [SYS_exec]              sys_exec,
+      |                             ^~~~~~~~
+      |                             SYS_exec
+kern/syscall/syscall.c:15:29: error: 'sys_yield' undeclared here (not in a function); did you mean 'SYS_yield'?
+   15 |     [SYS_yield]             sys_yield,
+      |                             ^~~~~~~~~
+      |                             SYS_yield
+kern/syscall/syscall.c:16:29: error: 'sys_kill' undeclared here (not in a function); did you mean 'SYS_kill'?
+   16 |     [SYS_kill]              sys_kill,
+      |                             ^~~~~~~~
+      |                             SYS_kill
+kern/syscall/syscall.c:17:29: error: 'sys_getpid' undeclared here (not in a function); did you mean 'SYS_getpid'?
+   17 |     [SYS_getpid]            sys_getpid,
+      |                             ^~~~~~~~~~
+      |                             SYS_getpid
+kern/syscall/syscall.c:18:29: error: 'sys_putc' undeclared here (not in a function); did you mean 'SYS_putc'?
+   18 |     [SYS_putc]              sys_putc,
+      |                             ^~~~~~~~
+      |                             SYS_putc
+kern/syscall/syscall.c:19:29: error: 'sys_pgdir' undeclared here (not in a function); did you mean 'SYS_pgdir'?
+   19 |     [SYS_pgdir]             sys_pgdir,
+      |                             ^~~~~~~~~
+      |                             SYS_pgdir
+make: *** [Makefile:162: obj/kern/syscall/syscall.o] Error 1
++ cc libs/hash.c
++ cc libs/printfmt.c
++ cc libs/rand.c
++ cc libs/string.c
++ cc user/badarg.c
++ cc user/libs/initcode.S
++ cc user/libs/panic.c
++ cc user/libs/stdio.c
++ cc user/libs/syscall.c
++ cc user/libs/ulib.c
++ cc user/libs/umain.c
++ cc user/badsegment.c
++ cc user/divzero.c
++ cc user/exit.c
++ cc user/faultread.c
++ cc user/faultreadkernel.c
++ cc user/forktest.c
++ cc user/forktree.c
++ cc user/hello.c
++ cc user/pgdir.c
++ cc user/softint.c
++ cc user/spin.c
++ cc user/testbss.c
+user/testbss.c: In function 'main':
+user/testbss.c:29:13: warning: array subscript 1049600 is above array bounds of 'uint32_t[1048576]' {aka 'unsigned int[1048576]'} [-Warray-bounds=]
+   29 |     bigarray[ARRAYSIZE + 1024] = 0;
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~
+user/testbss.c:6:10: note: while referencing 'bigarray'
+    6 | uint32_t bigarray[ARRAYSIZE];
+      |          ^~~~~~~~
++ cc user/waitkill.c
++ cc user/yield.c
+make: Target 'TARGETS' not remade because of errors.
+ERROR conda.cli.main_run:execute(127): `conda run make -k -j2` failed. (See above for error)

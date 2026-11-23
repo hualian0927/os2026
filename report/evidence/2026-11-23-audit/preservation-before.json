@@ -1,0 +1,15 @@
+{
+  "protected_files_equal_zip": [
+    "tools/test_lab5.c",
+    "tools/test_lab5.h",
+    "tools/inject.py",
+    "tools/grade.sh",
+    "kern/trap/trap.h",
+    "kern/sync/sync.h",
+    "kern/process/proc.h"
+  ],
+  "SAVE_ALL_equal_zip": true,
+  "source_equal_previous_manifest": true,
+  "source_digest": "8ccd48786a012922324e7f267e7822f90ece1ade3bb23fbcdd215b1b8aa9656c",
+  "zip_sha256": "4dd863d539fc70eb6df24eaab2b45cda7cbf9c7d47817fbee20bda4926b42ae2"
+}

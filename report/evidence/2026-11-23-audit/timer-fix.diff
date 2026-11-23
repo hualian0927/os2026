@@ -1,0 +1,15 @@
+--- before/kern/trap/trap.c
++++ after/kern/trap/trap.c
+@@ -105,6 +105,12 @@
+         /* 先装下一次时钟事件，否则只会有一次时钟中断。 */
+         clock_set_next_event();
+         ticks++;
++        /* lab5 function1 2412351: a U-mode spinner never calls yield.
++         * Request scheduling on the existing tick; trap() schedules only
++         * on return from U mode, not in the middle of an S-mode handler. */
++        if (current != NULL) {
++            current->need_resched = 1;
++        }
+         if (ticks % TICK_NUM == 0) {
+             print_ticks();
+         }
